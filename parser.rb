@@ -1,5 +1,7 @@
+$LOAD_PATH.unshift(File.expand_path("../", __FILE__))
+
 require 'csv'
-require './odca.rb'
+require 'odca.rb'
 require 'json'
 require 'pp'
 
