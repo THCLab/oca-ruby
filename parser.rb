@@ -5,12 +5,10 @@ require 'odca.rb'
 require 'json'
 require 'pp'
 
-
 filename = ARGV[0]
+raise RuntimeError.new, 'Please provide input file as an argument' unless filename
 
 records = CSV.read(filename, col_sep: ';')
-
-
 
 schema_base = SchemaBase.new
 # should be CID base on the content
@@ -182,4 +180,3 @@ puts JSON.pretty_generate(conditional_overlay)
 puts JSON.pretty_generate(source_overlay_supplier)
 puts JSON.pretty_generate(source_overlay_member)
 puts JSON.pretty_generate(source_overlay_supplier)
-
