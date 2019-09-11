@@ -1,9 +1,12 @@
+$LOAD_PATH.unshift(File.expand_path("../", __FILE__))
+
 require 'csv'
-require './odca.rb'
+require 'odca.rb'
 require 'json'
 require 'pp'
 
 filename = ARGV[0]
+raise RuntimeError.new, 'Please provide input file as an argument' unless filename
 
 records = CSV.read(filename, col_sep: ';')
 
@@ -64,6 +67,10 @@ records.each do |row|
       end
     }
 
+  encode_overlay.name = "Encode Overlay"
+  encode_overlay.description = "Encode used for #{row[0]}"
+  encode_overlay.language = "en"
+  encode_overlay.attr_encoding = encoding
 
     schema_base = SchemaBase.new
     # should be CID base on the content
@@ -178,7 +185,6 @@ records.each do |row|
   # Conditional Overlay
   conditional_overlay.name = "Conditional Overlay"
   conditional_overlay.description = "#{row[0]} attribute conditions"
-
 
   unless row[8].to_s.strip.empty?
     hidden_attributes[attr_name] = row[8]
