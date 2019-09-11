@@ -7,7 +7,7 @@ class SchemaBase
 
   def as_json(options={})
     {
-      "@context": "odca: https://odca.tech/",
+      "@context": "https://odca.tech/v1",
       name: @name,
       type: "spec/schame_base/1.0",
       description: @description,
@@ -20,4 +20,5 @@ class SchemaBase
   def to_json(*options)
     as_json(*options).to_json(*options)
   end
+  
 end

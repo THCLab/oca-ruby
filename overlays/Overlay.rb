@@ -9,8 +9,7 @@ class Overlay
 
   def as_json(options={})
     {
-      "@context": "odca: https://odca.tech/",
-      name: @name,
+      "@context": "https://odca.tech/overlays/v1",
       schema_base: @schema_base_id,
       type: @type,
       description: @description,
