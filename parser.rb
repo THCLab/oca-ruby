@@ -54,7 +54,7 @@ records.each do |row|
   if schema_base.name != row[0] and schema_base.name != nil
     objects = [schema_base, format_overlay, label_overlay, encode_overlay, entry_overlay_algo, 
     entry_overlay_auditor, entry_overlay_supplier, information_overlay_algo, information_overlay_supplier,
-    conditional_overlay, source_overlay_auditor, source_overlay_member, source_overlay_supplier]
+    conditional_overlay]
 
     # Calculate hl for schema_base
     base_hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(schema_base)).to_i(16))
@@ -67,17 +67,15 @@ records.each do |row|
           f.write(JSON.pretty_generate(obj))
         end
       else 
-        File.open("output/#{schema_base.name}/#{obj.name}.json","w") do |f|
+        obj.schema_base_id = base_hl
+        hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(obj)).to_i(16))
+        File.open("output/#{schema_base.name}/#{obj.name}-#{hl}.json","w") do |f|
           f.write(JSON.pretty_generate(obj))
         end
       end
     }
 
-  encode_overlay.name = "Encode Overlay"
-  encode_overlay.description = "Encode used for #{row[0]}"
-  encode_overlay.language = "en"
-  encode_overlay.attr_encoding = encoding
-
+    # Reset base object and overlays
     schema_base = SchemaBase.new
     # should be CID base on the content
     schema_base.id = "#{row[0]}fghajdks"
@@ -94,6 +92,24 @@ records.each do |row|
     source_overlay_auditor = SourceOverlay.new(schema_base.id)
     source_overlay_member = SourceOverlay.new(schema_base.id)
     source_overlay_supplier = SourceOverlay.new(schema_base.id)
+    attrs = {}
+    pii = []
+    formats = {}
+    labels = {}
+    categories = []
+    category_labels = {}
+    encoding = {}
+    entries_algo = {}
+    entries_supplier = {}
+    entries_auditor = {}
+    information_algo = {}
+    information_supplier = {}
+    hidden_attributes = {}
+    required_attributes = {}
+    sources_auditor = {}
+    sources_member = {}
+    sources_supplier = {}
+
   end
   schema_base.name = row[0]
   schema_base.description = row[0]
@@ -118,16 +134,14 @@ records.each do |row|
     category_labels[h] = c
   end
 
-
-
   schema_base.attributes = attrs
   schema_base.pii_attributes = pii
   format_overlay.formats = formats
   format_overlay.name = "Format overlay"
-  format_overlay.description = "Formats used for #{row[0]}"
-  label_overlay.name = "Label overlay"
+  format_overlay.description = "Attribute formats for #{row[0]}"
+
   label_overlay.language = "en"
-  label_overlay.description = "Labels for #{row[0]}"
+  label_overlay.description = "Category and attribute labels for #{row[0]}"
   label_overlay.attr_labels = labels
   label_overlay.attr_categories = categories.flatten.uniq.map {|i|
     i.strip.downcase.gsub(/\s+/, "_").to_sym
@@ -139,8 +153,7 @@ records.each do |row|
     encoding[attr_name] = row[11]
   end
 
-  encode_overlay.name = "Encode Overlay"
-  encode_overlay.description = "Encode used for #{row[0]}"
+  encode_overlay.description = "Character set encoding for #{row[0]}"
   encode_overlay.language = "en"
   encode_overlay.attr_encoding = encoding
 
@@ -149,9 +162,8 @@ records.each do |row|
     values = row[12][2..-3].split("|")
     entries_algo[attr_name] = values
   end
-  entry_overlay_algo.name = "Entry Overlay"
-  entry_overlay_algo.description = "#{row[0]} entries for Algorithm"
-  entry_overlay_algo.default_values = entries_algo
+  entry_overlay_algo.description = "Field entries for #{row[0]}"
+  entry_overlay_algo.attr_entries = entries_algo
 
   # Entry overlay for Supplier
   unless row[14].to_s.strip.empty?
@@ -159,8 +171,8 @@ records.each do |row|
     entries_supplier[attr_name] = values
   end
   entry_overlay_supplier.name = "Entry Overlay"
-  entry_overlay_supplier.description = "#{row[0]} entries for Supplier"
-  entry_overlay_supplier.default_values = entries_supplier
+  entry_overlay_supplier.description = "Field entries for #{row[0]}"
+  entry_overlay_supplier.attr_entries = entries_supplier
 
   # Entry overlay for Auditor
   unless row[26].to_s.strip.empty?
@@ -168,16 +180,15 @@ records.each do |row|
     entries_auditor[attr_name] = values
   end
   entry_overlay_auditor.name = "Entry Overlay"
-  entry_overlay_auditor.description = "#{row[0]} entries for Auditor"
-  entry_overlay_auditor.default_values = entries_auditor
+  entry_overlay_auditor.description = "Field entries for #{row[0]}"
+  entry_overlay_auditor.attr_entries = entries_auditor
 
   # Information overlay for Algorithm
   unless row[13].to_s.strip.empty?
     information_algo[attr_name] = row[13]
   end
 
-  information_overlay_algo.name = "Information Overlay"
-  information_overlay_algo.description = "#{row[0]} informations for Algorithm"
+  information_overlay_algo.description = "Informational items for #{row[0]}"
   information_overlay_algo.attr_information = information_algo
 
   # Information overlay for Supplier
@@ -185,12 +196,10 @@ records.each do |row|
     information_supplier[attr_name] = row[15]
   end
 
-  information_overlay_supplier.name = "Information Overlay"
-  information_overlay_supplier.description = "#{row[0]} informations for Supplier"
+  information_overlay_supplier.description = "Informational items for #{row[0]}"
   information_overlay_supplier.attr_information = information_supplier
 
   # Conditional Overlay
-  conditional_overlay.name = "Conditional Overlay"
   conditional_overlay.description = "#{row[0]} attribute conditions"
 
   unless row[8].to_s.strip.empty?
@@ -204,8 +213,7 @@ records.each do |row|
     sources_auditor[attr_name] = row[28]
   end
 
-  source_overlay_auditor.name = "Source overlay"
-  source_overlay_auditor.description = "Auditor suorce overlay"
+  source_overlay_auditor.description = "Source endpoints for #{row[0]}"
   source_overlay_auditor.sources = sources_auditor
 
 
