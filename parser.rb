@@ -11,8 +11,10 @@ raise RuntimeError.new, 'Please provide input file as an argument' unless filena
 records = CSV.read(filename, col_sep: ';')
 
 schema_base = SchemaBase.new
-# should be CID base on the content
+# TODO should be CID base on the content
 schema_base.id = "11f1fdasfj081jd1982d9j"
+schema_base.classification = "G35202010" # GICS code start with G
+
 
 format_overlay = FormatOverlay.new(schema_base.id)
 label_overlay = LabelOverlay.new(schema_base.id)
@@ -75,6 +77,7 @@ records.each do |row|
     schema_base = SchemaBase.new
     # should be CID base on the content
     schema_base.id = "#{row[0]}fghajdks"
+    schema_base.classification = "G35202010" # GICS code
     format_overlay = FormatOverlay.new(schema_base.id)
     label_overlay = LabelOverlay.new(schema_base.id)
     encode_overlay = EncodeOverlay.new(schema_base.id)

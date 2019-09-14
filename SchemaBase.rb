@@ -3,7 +3,7 @@
 # @param issued_by [Text] - DID of the issuer, verification steps happens outside of storage, means required trusted framework to deal with verification process
 # @param attr_names - array of the attribute names with their types or URI to their definition
 class SchemaBase
-  attr_accessor :id, :name, :description, :issued_by, :attributes, :pii_attributes
+  attr_accessor :id, :name, :description, :issued_by, :attributes, :pii_attributes, :classification
 
   def as_json(options={})
     {
@@ -11,6 +11,7 @@ class SchemaBase
       name: @name,
       type: "spec/schame_base/1.0",
       description: @description,
+      classification: @classification,
       issued_by: @issued_by,
       attributes: @attributes,
       pii_attributes: @pii_attributes
