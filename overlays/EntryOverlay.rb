@@ -1,6 +1,6 @@
 class EntryOverlay < Overlay
 
-  attr_accessor :default_values
+  attr_accessor :attr_entries
 
   def initialize(schema_base_id)
     super
@@ -10,7 +10,7 @@ class EntryOverlay < Overlay
   def as_json(options={})
     super.merge!(
     {
-      default_values: @default_values
+      attr_entries: @attr_entries
     })
   end
 end
