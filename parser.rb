@@ -4,6 +4,8 @@ require 'csv'
 require 'odca.rb'
 require 'json'
 require 'pp'
+require 'digest/sha2'
+require 'base58'
 
 filename = ARGV[0]
 raise RuntimeError.new, 'Please provide input file as an argument' unless filename
@@ -48,12 +50,14 @@ sources_member = {}
 sources_supplier = {}
 
 records.each do |row|
-  # Iterate until schema base does not change
+  # Do it only if schema base change
   if schema_base.name != row[0] and schema_base.name != nil
     objects = [schema_base, format_overlay, label_overlay, encode_overlay, entry_overlay_algo, 
     entry_overlay_auditor, entry_overlay_supplier, information_overlay_algo, information_overlay_supplier,
     conditional_overlay, source_overlay_auditor, source_overlay_member, source_overlay_supplier]
 
+    # Calculate hl for schema_base
+    base_hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(schema_base)).to_i(16))
     objects.each { |obj|
       puts "Writing #{obj.class.name}"
       if obj.class.name == "SchemaBase" 
