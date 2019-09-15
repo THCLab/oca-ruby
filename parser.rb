@@ -80,6 +80,7 @@ records.each do |row|
     # should be CID base on the content
     schema_base.id = "#{row[0]}fghajdks"
     schema_base.classification = "G35202010" # GICS code
+
     format_overlay = FormatOverlay.new(schema_base.id)
     label_overlay = LabelOverlay.new(schema_base.id)
     encode_overlay = EncodeOverlay.new(schema_base.id)
@@ -136,7 +137,7 @@ records.each do |row|
 
   schema_base.attributes = attrs
   schema_base.pii_attributes = pii
-  format_overlay.formats = formats
+  format_overlay.attr_formats = formats
   format_overlay.name = "Format overlay"
   format_overlay.description = "Attribute formats for #{row[0]}"
 
@@ -214,7 +215,7 @@ records.each do |row|
   end
 
   source_overlay_auditor.description = "Source endpoints for #{row[0]}"
-  source_overlay_auditor.sources = sources_auditor
+  source_overlay_auditor.attr_sources = sources_auditor
 
 
 end

@@ -1,6 +1,6 @@
 class SourceOverlay < Overlay
 
-  attr_accessor :sources
+  attr_accessor :attr_sources
 
   def initialize(schema_base_id)
     super
@@ -10,7 +10,7 @@ class SourceOverlay < Overlay
   def as_json(options={})
     super.merge!(
     {
-      sources: @sources
+      attr_sources: @attr_sources
     })
   end
 end

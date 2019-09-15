@@ -1,6 +1,6 @@
 class FormatOverlay < Overlay
 
-  attr_accessor :formats
+  attr_accessor :attr_formats
 
   def initialize(schema_base_id)
     super
@@ -11,7 +11,7 @@ class FormatOverlay < Overlay
     super.merge!(
     {
       issued_by: @issued_by,
-      attributes_format: @formats
+      attr_formats: @attr_formats
     })
   end
 end
