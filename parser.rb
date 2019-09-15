@@ -79,8 +79,6 @@ records.each do |row|
 
     # Reset base object and overlays
     schema_base = SchemaBase.new
-    # should be CID base on the content
-    schema_base.id = "#{row[0]}fghajdks"
     schema_base.classification = "G35202010" # GICS code
 
     format_overlay = FormatOverlay.new(schema_base.id)
