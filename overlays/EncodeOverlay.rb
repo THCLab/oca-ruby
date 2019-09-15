@@ -16,4 +16,8 @@ class EncodeOverlay < Overlay
       attr_encoding: @attr_encoding
     })
   end
+
+  def is_valid?
+    super
+  end
 end

@@ -16,4 +16,8 @@ class LabelOverlay < Overlay
       category_labels: @category_labels
     })
   end
+
+  def is_valid?
+    !attr_labels.empty? || !attr_categories.empty? || super
+  end
 end

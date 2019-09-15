@@ -14,5 +14,9 @@ class ConditionalOverlay < Overlay
       required_attributes: @required_attributes
     })
   end
+
+  def is_valid?
+    !hidden_attributes.empty? || !required_attributes.empty? || super
+  end
 end
 

@@ -13,5 +13,9 @@ class SourceOverlay < Overlay
       attr_sources: @attr_sources
     })
   end
+
+  def is_valid?
+    !attr_sources.empty?
+  end
 end
 

@@ -67,10 +67,12 @@ records.each do |row|
           f.write(JSON.pretty_generate(obj))
         end
       else 
-        obj.schema_base_id = base_hl
-        hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(obj)).to_i(16))
-        File.open("output/#{schema_base.name}/#{obj.name}-#{hl}.json","w") do |f|
-          f.write(JSON.pretty_generate(obj))
+        if obj.is_valid?
+          obj.schema_base_id = base_hl
+          hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(obj)).to_i(16))
+          File.open("output/#{schema_base.name}/#{obj.class.name}-#{hl}.json","w") do |f|
+            f.write(JSON.pretty_generate(obj))
+          end
         end
       end
     }
@@ -138,7 +140,6 @@ records.each do |row|
   schema_base.attributes = attrs
   schema_base.pii_attributes = pii
   format_overlay.attr_formats = formats
-  format_overlay.name = "Format overlay"
   format_overlay.description = "Attribute formats for #{row[0]}"
 
   label_overlay.language = "en"
@@ -171,7 +172,6 @@ records.each do |row|
     values = row[14][2..-3].split("|")
     entries_supplier[attr_name] = values
   end
-  entry_overlay_supplier.name = "Entry Overlay"
   entry_overlay_supplier.description = "Field entries for #{row[0]}"
   entry_overlay_supplier.attr_entries = entries_supplier
 
@@ -180,7 +180,6 @@ records.each do |row|
     values = row[26][2..-3].split("|")
     entries_auditor[attr_name] = values
   end
-  entry_overlay_auditor.name = "Entry Overlay"
   entry_overlay_auditor.description = "Field entries for #{row[0]}"
   entry_overlay_auditor.attr_entries = entries_auditor
 

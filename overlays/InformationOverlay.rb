@@ -13,4 +13,8 @@ class InformationOverlay < Overlay
       attr_information: @attr_information
     })
   end
+
+  def is_valid?
+    !attr_information.empty? || super
+  end
 end

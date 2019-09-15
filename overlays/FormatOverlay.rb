@@ -14,4 +14,8 @@ class FormatOverlay < Overlay
       attr_formats: @attr_formats
     })
   end
+
+  def is_valid?
+    !attr_formats.empty? || super
+  end
 end

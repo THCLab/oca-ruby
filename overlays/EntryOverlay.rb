@@ -13,4 +13,8 @@ class EntryOverlay < Overlay
       attr_entries: @attr_entries
     })
   end
+
+  def is_valid?
+    !attr_entries.empty? || super
+  end
 end
