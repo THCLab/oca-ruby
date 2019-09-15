@@ -112,7 +112,7 @@ records.each do |row|
 
   end
   schema_base.name = row[0]
-  schema_base.description = row[0]
+  schema_base.description = row[1]
   attr_name = row[3]
   attr_type = row[4]
   attrs[attr_name] = attr_type
