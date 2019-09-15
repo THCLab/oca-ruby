@@ -2,8 +2,8 @@ class FormatOverlay < Overlay
 
   attr_accessor :attr_formats
 
-  def initialize(schema_base_id)
-    super
+  def initialize(schema_base_id = "", issued_by = "")
+    super(schema_base_id, issued_by)
     @type = "spec/overlay/format/1.0"
   end
 
@@ -16,6 +16,6 @@ class FormatOverlay < Overlay
   end
 
   def is_valid?
-    !attr_formats.empty? || super
+    !attr_formats.empty?  && super
   end
 end

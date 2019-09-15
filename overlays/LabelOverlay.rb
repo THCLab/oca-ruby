@@ -2,8 +2,8 @@ class LabelOverlay < Overlay
 
   attr_accessor :attr_labels, :language, :attr_categories, :category_labels
 
-  def initialize(schema_base_id)
-    super
+  def initialize(schema_base_id = "", issued_by = "")
+    super(schema_base_id, issued_by)
     @type = "spec/overlay/label/1.0"
   end
 
@@ -18,6 +18,6 @@ class LabelOverlay < Overlay
   end
 
   def is_valid?
-    !attr_labels.empty? || !attr_categories.empty? || super
+    (!attr_labels.empty? || !attr_categories.empty?) && super
   end
 end

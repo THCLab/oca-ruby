@@ -2,8 +2,8 @@ class ConditionalOverlay < Overlay
 
   attr_accessor :hidden_attributes, :required_attributes
 
-  def initialize(schema_base_id)
-    super
+  def initialize(schema_base_id = "", issued_by = "")
+    super(schema_base_id, issued_by)
     @type = "spec/overlay/conditional/1.0"
   end
 
@@ -16,7 +16,7 @@ class ConditionalOverlay < Overlay
   end
 
   def is_valid?
-    !hidden_attributes.empty? || !required_attributes.empty? || super
+    (!hidden_attributes.empty? || !required_attributes.empty?) && super
   end
 end
 

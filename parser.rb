@@ -13,23 +13,21 @@ raise RuntimeError.new, 'Please provide input file as an argument' unless filena
 records = CSV.read(filename, col_sep: ';')
 
 schema_base = SchemaBase.new
-# TODO should be CID base on the content
-schema_base.id = "11f1fdasfj081jd1982d9j"
 schema_base.classification = "G35202010" # GICS code start with G
 
 
-format_overlay = FormatOverlay.new(schema_base.id)
-label_overlay = LabelOverlay.new(schema_base.id)
-encode_overlay = EncodeOverlay.new(schema_base.id)
-entry_overlay_algo = EntryOverlay.new(schema_base.id)
-entry_overlay_auditor = EntryOverlay.new(schema_base.id)
-entry_overlay_supplier = EntryOverlay.new(schema_base.id)
-information_overlay_algo = InformationOverlay.new(schema_base.id)
-information_overlay_supplier = InformationOverlay.new(schema_base.id)
-conditional_overlay = ConditionalOverlay.new(schema_base.id)
-source_overlay_auditor = SourceOverlay.new(schema_base.id)
-source_overlay_member = SourceOverlay.new(schema_base.id)
-source_overlay_supplier = SourceOverlay.new(schema_base.id)
+format_overlay = FormatOverlay.new
+label_overlay = LabelOverlay.new
+encode_overlay = EncodeOverlay.new
+entry_overlay_algo = EntryOverlay.new
+entry_overlay_auditor = EntryOverlay.new
+entry_overlay_supplier = EntryOverlay.new
+information_overlay_algo = InformationOverlay.new
+information_overlay_supplier = InformationOverlay.new
+conditional_overlay = ConditionalOverlay.new
+source_overlay_auditor = SourceOverlay.new
+source_overlay_member = SourceOverlay.new
+source_overlay_supplier = SourceOverlay.new
 
 attrs = {}
 pii = []
@@ -50,7 +48,7 @@ sources_member = {}
 sources_supplier = {}
 
 records.each do |row|
-  # Do it only if schema base change
+  # Save it only if schema base change
   if schema_base.name != row[0] and schema_base.name != nil
     objects = [schema_base, format_overlay, label_overlay, encode_overlay, entry_overlay_algo, 
     entry_overlay_auditor, entry_overlay_supplier, information_overlay_algo, information_overlay_supplier,
@@ -67,12 +65,16 @@ records.each do |row|
           f.write(JSON.pretty_generate(obj))
         end
       else 
+        puts "Processing #{obj.description}"
+        obj.schema_base_id = base_hl
         if obj.is_valid?
-          obj.schema_base_id = base_hl
+          puts "Object is valid saving ..."
           hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(obj)).to_i(16))
           File.open("output/#{schema_base.name}/#{obj.class.name}-#{hl}.json","w") do |f|
             f.write(JSON.pretty_generate(obj))
           end
+        else
+          puts "Object is invalid"
         end
       end
     }
@@ -81,18 +83,18 @@ records.each do |row|
     schema_base = SchemaBase.new
     schema_base.classification = "G35202010" # GICS code
 
-    format_overlay = FormatOverlay.new(schema_base.id)
-    label_overlay = LabelOverlay.new(schema_base.id)
-    encode_overlay = EncodeOverlay.new(schema_base.id)
-    entry_overlay_algo = EntryOverlay.new(schema_base.id)
-    entry_overlay_auditor = EntryOverlay.new(schema_base.id)
-    entry_overlay_supplier = EntryOverlay.new(schema_base.id)
-    information_overlay_algo = InformationOverlay.new(schema_base.id)
-    information_overlay_supplier = InformationOverlay.new(schema_base.id)
-    conditional_overlay = ConditionalOverlay.new(schema_base.id)
-    source_overlay_auditor = SourceOverlay.new(schema_base.id)
-    source_overlay_member = SourceOverlay.new(schema_base.id)
-    source_overlay_supplier = SourceOverlay.new(schema_base.id)
+    format_overlay = FormatOverlay.new
+    label_overlay = LabelOverlay.new
+    encode_overlay = EncodeOverlay.new
+    entry_overlay_algo = EntryOverlay.new
+    entry_overlay_auditor = EntryOverlay.new
+    entry_overlay_supplier = EntryOverlay.new
+    information_overlay_algo = InformationOverlay.new
+    information_overlay_supplier = InformationOverlay.new
+    conditional_overlay = ConditionalOverlay.new
+    source_overlay_auditor = SourceOverlay.new
+    source_overlay_member = SourceOverlay.new
+    source_overlay_supplier = SourceOverlay.new
     attrs = {}
     pii = []
     formats = {}

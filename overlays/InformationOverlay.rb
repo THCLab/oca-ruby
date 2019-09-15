@@ -2,8 +2,8 @@ class InformationOverlay < Overlay
 
   attr_accessor :attr_information
 
-  def initialize(schema_base_id)
-    super
+  def initialize(schema_base_id = "", issued_by = "")
+    super(schema_base_id, issued_by)
     @type = "spec/overlay/information/1.0"
   end
 
@@ -15,6 +15,6 @@ class InformationOverlay < Overlay
   end
 
   def is_valid?
-    !attr_information.empty? || super
+    !attr_information.empty? && super
   end
 end

@@ -2,7 +2,7 @@ class Overlay
 
   attr_accessor :name, :description, :issued_by, :schema_base_id, :type
 
-  def initialize(schema_base_id, issued_by = "")
+  def initialize(schema_base_id = "", issued_by = "")
     @schema_base_id = schema_base_id
     @issued_by = issued_by
   end
@@ -22,6 +22,6 @@ class Overlay
   end
 
   def is_valid?
-    schema_base_id.empty?
+    !schema_base_id&.empty?
   end
 end

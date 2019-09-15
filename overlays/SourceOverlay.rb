@@ -2,8 +2,8 @@ class SourceOverlay < Overlay
 
   attr_accessor :attr_sources
 
-  def initialize(schema_base_id)
-    super
+  def initialize(schema_base_id = "", issued_by = "")
+    super(schema_base_id, issued_by)
     @type = "spec/overlay/source/1.0"
   end
 
@@ -15,7 +15,7 @@ class SourceOverlay < Overlay
   end
 
   def is_valid?
-    !attr_sources.empty?
+    !attr_sources.empty? && super
   end
 end
 
