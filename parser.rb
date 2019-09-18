@@ -26,6 +26,7 @@ information = {}
 hidden_attributes = {}
 required_attributes = {}
 sources = {}
+review = {}
 overlays = {}
 
 columns_number = records[0].size 
@@ -106,6 +107,7 @@ records.each do |row|
     hidden_attributes = {}
     required_attributes = {}
     sources = {}
+    review = {}
 
   end
 
@@ -175,10 +177,16 @@ records.each do |row|
       overlay.attr_information = information
     when "SourceOverlay"
       unless row[index].to_s.strip.empty?
-        sources[attr_name] = row[index]
+        sources[attr_name] = ""
       end
       overlay.description = "Source endpoints for #{schema_base.name}"
       overlay.attr_sources = sources
+    when "ReviewOverlay"
+      unless row[index].to_s.strip.empty?
+        review[attr_name] = ""
+      end
+      overlay.description = "Field entry review comments for #{schema_base.name}"
+      overlay.attr_comments = review
     else
       puts "Error uknown overlay: #{overlay}"
     end
