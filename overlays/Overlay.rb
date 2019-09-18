@@ -1,6 +1,6 @@
 class Overlay
 
-  attr_accessor :name, :description, :issued_by, :schema_base_id, :type
+  attr_accessor :name, :description, :issued_by, :schema_base_id, :type, :role, :purpose
 
   def initialize(schema_base_id = "", issued_by = "")
     @schema_base_id = schema_base_id
@@ -14,6 +14,8 @@ class Overlay
       type: @type,
       description: @description,
       issued_by: @issued_by,
+      role: @role,
+      purpose: @purpose
     }
   end
 

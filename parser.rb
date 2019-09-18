@@ -13,20 +13,6 @@ raise RuntimeError.new, 'Please provide input file as an argument' unless filena
 records = CSV.read(filename, col_sep: ';')
 
 schema_base = SchemaBase.new
-schema_base.classification = "GICS:35202010" # GICS code start with G
-
-format_overlay = FormatOverlay.new
-label_overlay = LabelOverlay.new
-encode_overlay = EncodeOverlay.new
-entry_overlay_algo = EntryOverlay.new
-entry_overlay_auditor = EntryOverlay.new
-entry_overlay_supplier = EntryOverlay.new
-information_overlay_algo = InformationOverlay.new
-information_overlay_supplier = InformationOverlay.new
-conditional_overlay = ConditionalOverlay.new
-source_overlay_auditor = SourceOverlay.new
-source_overlay_member = SourceOverlay.new
-source_overlay_supplier = SourceOverlay.new
 
 attrs = {}
 pii = []
@@ -35,33 +21,46 @@ labels = {}
 categories = []
 category_labels = {}
 encoding = {}
-entries_algo = {}
-entries_supplier = {}
-entries_auditor = {}
-information_algo = {}
-information_supplier = {}
+entries = {}
+information = {}
 hidden_attributes = {}
 required_attributes = {}
-sources_auditor = {}
-sources_member = {}
-sources_supplier = {}
+sources = {}
+overlays = {}
 
+columns_number = records[0].size 
 
-columns = 49
+puts "Reading overlays ..."
+columns_number.times { |i| 
+  overlayName = records[2][i]
+  begin
+    overlayClazz = Object.const_get overlayName.gsub(" ", "")
+    overlay = overlayClazz.new
+    overlay.role = records[0][i]
+    overlay.purpose = records[1][i]
+    overlay.language = records[3][i] if defined? overlay.language
+    overlays[i] = overlay
+  rescue => e
+    puts "Warrning: problem reading #{overlayName}, probably not overlay: #{e}"
+  end
+}
 
-
-
+# Drop header before start filling the object
+records = records.drop(0)
+records = records.drop(1)
+records = records.drop(2)
+records = records.drop(3)
+puts "Overlays loaded, start creating objects"
 records.each do |row|
   # Save it only if schema base change which means that we parsed all attributes for 
   # previous schema base
   if schema_base.name != row[0] and schema_base.name != nil
-    objects = [schema_base, format_overlay, label_overlay, encode_overlay, entry_overlay_algo, 
-    entry_overlay_auditor, entry_overlay_supplier, information_overlay_algo, information_overlay_supplier,
-    conditional_overlay]
+    objects = [schema_base]
+    objects << overlays.values
 
     # Calculate hl for schema_base
     base_hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(schema_base)).to_i(16))
-    objects.each { |obj|
+    objects.flatten.each { |obj|
       puts "Writing #{obj.class.name}"
       if obj.class.name == "SchemaBase" 
         puts "Create dir"
@@ -84,22 +83,17 @@ records.each do |row|
       end
     }
 
-    # Reset base object and overlays
+    # Reset base object, overlays and temporary attributes
     schema_base = SchemaBase.new
-    schema_base.classification = "G35202010" # GICS code
 
-    format_overlay = FormatOverlay.new
-    label_overlay = LabelOverlay.new
-    encode_overlay = EncodeOverlay.new
-    entry_overlay_algo = EntryOverlay.new
-    entry_overlay_auditor = EntryOverlay.new
-    entry_overlay_supplier = EntryOverlay.new
-    information_overlay_algo = InformationOverlay.new
-    information_overlay_supplier = InformationOverlay.new
-    conditional_overlay = ConditionalOverlay.new
-    source_overlay_auditor = SourceOverlay.new
-    source_overlay_member = SourceOverlay.new
-    source_overlay_supplier = SourceOverlay.new
+    overlays.each { |index, overlay|
+      overlays[index] =
+      newOverlay = overlay.class.new
+      newOverlay.role = overlay.role
+      newOverlay.purpose = overlay.purpose
+      newOverlay.language = overlay.language if defined? overlay.language
+    }
+
     attrs = {}
     pii = []
     formats = {}
@@ -107,121 +101,89 @@ records.each do |row|
     categories = []
     category_labels = {}
     encoding = {}
-    entries_algo = {}
-    entries_supplier = {}
-    entries_auditor = {}
-    information_algo = {}
-    information_supplier = {}
+    entries = {}
+    information = {}
     hidden_attributes = {}
     required_attributes = {}
-    sources_auditor = {}
-    sources_member = {}
-    sources_supplier = {}
+    sources = {}
 
   end
 
+  # START Schema base object 
   schema_base.name = row[0]
   schema_base.description = row[1]
-  attr_name = row[3]
-  attr_type = row[4]
+  schema_base.classification = row[5]
+
+  attr_name = row[2]
+  attr_type = row[3]
   attrs[attr_name] = attr_type
   # PII
-  if row[5] == "Y"
+  if row[4] == "Y"
     pii << attr_name
-  end
-
-  # Format overlay
-  unless row[7].to_s.strip.empty?
-    formats[attr_name] = row[7]
-  end
-  # Set labels for attributes
-  labels[attr_name] = row[10].split("|")[-1].strip
-  # TODO support for nested categories
-  tmp = row[10].split("|")[0..-2]
-  categories << tmp
-  tmp.each do |c|
-    h = c.strip.downcase.gsub(/\s+/, "_").to_sym
-    category_labels[h] = c
   end
 
   schema_base.attributes = attrs
   schema_base.pii_attributes = pii
-  format_overlay.attr_formats = formats
-  format_overlay.description = "Attribute formats for #{row[0]}"
 
-  label_overlay.language = "en"
-  label_overlay.description = "Category and attribute labels for #{row[0]}"
-  label_overlay.attr_labels = labels
-  label_overlay.attr_categories = categories.flatten.uniq.map {|i|
-    i.strip.downcase.gsub(/\s+/, "_").to_sym
+  # END Schema base object 
+
+  # START Overlays 
+  overlays.each { |index,overlay| 
+    case overlay.class.name
+    when "FormatOverlay"
+      unless row[index].to_s.strip.empty?
+        formats[attr_name] = row[index]
+      end
+      overlay.attr_formats = formats
+      overlay.description = "Attribute formats for #{schema_base.name}"
+    when "LabelOverlay"
+      if row[index]
+        labels[attr_name] = row[index].split("|")[-1].strip if row[index]
+        # TODO support for nested categories
+        tmp = row[index].split("|")[0..-2]
+        categories << tmp
+        tmp.each do |c|
+          h = c.strip.downcase.gsub(/\s+/, "_").to_sym
+          category_labels[h] = c
+        end
+      end
+      overlay.description = "Category and attribute labels for #{schema_base.name}"
+      overlay.attr_labels = labels
+      overlay.attr_categories = categories.flatten.uniq.map { |i|
+        i.strip.downcase.gsub(/\s+/, "_").to_sym
+      }
+      overlay.category_labels = category_labels
+    when "EncodeOverlay"
+      unless row[index].to_s.strip.empty?
+        encoding[attr_name] = row[index]
+      end
+      overlay.description = "Character set encoding for #{schema_base.name}"
+      overlay.attr_encoding = encoding
+    when "EntryOverlay"
+      unless row[index].to_s.strip.empty?
+        value = row[index].to_s.strip
+        values = value.split("|")
+        entries[attr_name] = values
+      end
+      overlay.description = "Field entries for #{schema_base.name}"
+      overlay.attr_entries = entries
+    when "InformationOverlay"
+      unless row[index].to_s.strip.empty?
+        information[attr_name] = row[index]
+      end
+      overlay.description = "Informational items for #{schema_base.name}"
+      overlay.attr_information = information
+    when "SourceOverlay"
+      unless row[index].to_s.strip.empty?
+        sources[attr_name] = row[index]
+      end
+      overlay.description = "Source endpoints for #{schema_base.name}"
+      overlay.attr_sources = sources
+    else
+      puts "Error uknown overlay: #{overlay}"
+    end
   }
-  label_overlay.category_labels = category_labels
-
-  # Encoding overlay
-  unless row[11].to_s.strip.empty?
-    encoding[attr_name] = row[11]
-  end
-
-  encode_overlay.description = "Character set encoding for #{row[0]}"
-  encode_overlay.language = "en"
-  encode_overlay.attr_encoding = encoding
-
-  # Entry overlay for Algorithm
-  unless row[12].to_s.strip.empty?
-    values = row[12][2..-3].split("|")
-    entries_algo[attr_name] = values
-  end
-  entry_overlay_algo.description = "Field entries for #{row[0]}"
-  entry_overlay_algo.attr_entries = entries_algo
-
-  # Entry overlay for Supplier
-  unless row[14].to_s.strip.empty?
-    values = row[14][2..-3].split("|")
-    entries_supplier[attr_name] = values
-  end
-  entry_overlay_supplier.description = "Field entries for #{row[0]}"
-  entry_overlay_supplier.attr_entries = entries_supplier
-
-  # Entry overlay for Auditor
-  unless row[26].to_s.strip.empty?
-    values = row[26][2..-3].split("|")
-    entries_auditor[attr_name] = values
-  end
-  entry_overlay_auditor.description = "Field entries for #{row[0]}"
-  entry_overlay_auditor.attr_entries = entries_auditor
-
-  # Information overlay for Algorithm
-  unless row[13].to_s.strip.empty?
-    information_algo[attr_name] = row[13]
-  end
-
-  information_overlay_algo.description = "Informational items for #{row[0]}"
-  information_overlay_algo.attr_information = information_algo
-
-  # Information overlay for Supplier
-  unless row[15].to_s.strip.empty?
-    information_supplier[attr_name] = row[15]
-  end
-
-  information_overlay_supplier.description = "Informational items for #{row[0]}"
-  information_overlay_supplier.attr_information = information_supplier
-
-  # Conditional Overlay
-  conditional_overlay.description = "#{row[0]} attribute conditions"
-
-  unless row[8].to_s.strip.empty?
-    hidden_attributes[attr_name] = row[8]
-  end
-  conditional_overlay.hidden_attributes = hidden_attributes
-  conditional_overlay.required_attributes = required_attributes
-
-  # sources overlay for auditor
-  unless row[28].to_s.strip.empty?
-    sources_auditor[attr_name] = row[28]
-  end
-
-  source_overlay_auditor.description = "Source endpoints for #{row[0]}"
-  source_overlay_auditor.attr_sources = sources_auditor
+  # END Overlays
 
 
 end
