@@ -13,8 +13,7 @@ raise RuntimeError.new, 'Please provide input file as an argument' unless filena
 records = CSV.read(filename, col_sep: ';')
 
 schema_base = SchemaBase.new
-schema_base.classification = "G35202010" # GICS code start with G
-
+schema_base.classification = "GICS:35202010" # GICS code start with G
 
 format_overlay = FormatOverlay.new
 label_overlay = LabelOverlay.new
@@ -47,8 +46,14 @@ sources_auditor = {}
 sources_member = {}
 sources_supplier = {}
 
+
+columns = 49
+
+
+
 records.each do |row|
-  # Save it only if schema base change
+  # Save it only if schema base change which means that we parsed all attributes for 
+  # previous schema base
   if schema_base.name != row[0] and schema_base.name != nil
     objects = [schema_base, format_overlay, label_overlay, encode_overlay, entry_overlay_algo, 
     entry_overlay_auditor, entry_overlay_supplier, information_overlay_algo, information_overlay_supplier,
@@ -114,6 +119,7 @@ records.each do |row|
     sources_supplier = {}
 
   end
+
   schema_base.name = row[0]
   schema_base.description = row[1]
   attr_name = row[3]
@@ -123,6 +129,7 @@ records.each do |row|
   if row[5] == "Y"
     pii << attr_name
   end
+
   # Format overlay
   unless row[7].to_s.strip.empty?
     formats[attr_name] = row[7]
