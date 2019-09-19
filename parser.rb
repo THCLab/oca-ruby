@@ -32,10 +32,10 @@ sources = {}
 review = {}
 overlays = {}
 
-columns_number = records[0].size 
+columns_number = records[0].size
 
 puts "Reading overlays ..."
-columns_number.times { |i| 
+columns_number.times { |i|
   overlayName = records[2][i]
   begin
     overlayClazz = Object.const_get overlayName.gsub(" ", "")
@@ -56,8 +56,7 @@ records = records.drop(2)
 records = records.drop(3)
 puts "Overlays loaded, start creating objects"
 records.each do |row|
-
-  # Save it only if schema base change which means that we parsed all attributes for 
+  # Save it only if schema base change which means that we parsed all attributes for
   # previous schema base
   if schema_base.name != row[0] and schema_base.name != nil
     objects = [schema_base]
@@ -68,7 +67,7 @@ records.each do |row|
     base_hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(schema_base)).to_i(16))
     objects.flatten.each { |obj|
       puts "Writing #{obj.class.name}: #{obj.name}"
-      if obj.class.name == "SchemaBase" 
+      if obj.class.name == "SchemaBase"
         puts "Create dir"
         unless Dir.exist?("output/"+obj.name)
           FileUtils.mkdir_p("output/"+obj.name)
@@ -76,7 +75,7 @@ records.each do |row|
         File.open("output/#{obj.name}.json","w") do |f|
           f.write(JSON.pretty_generate(obj))
         end
-      else 
+      else
         puts "Processing #{obj.description}"
         obj.schema_base_id = base_hl
         if obj.is_valid?
@@ -118,7 +117,7 @@ records.each do |row|
 
   end
 
-  # START Schema base object 
+  # START Schema base object
   schema_base.name = row[0]
   schema_base.description = row[1]
   schema_base.classification = row[2]
@@ -134,10 +133,10 @@ records.each do |row|
   schema_base.attributes = attrs
   schema_base.pii_attributes = pii
 
-  # END Schema base object 
+  # END Schema base object
 
-  # START Overlays 
-  overlays.each { |index,overlay| 
+  # START Overlays
+  overlays.each { |index,overlay|
     case overlay.class.name
     when "FormatOverlay"
       formats[index] = {} if formats[index] == nil
