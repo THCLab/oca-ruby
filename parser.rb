@@ -2,6 +2,7 @@ $LOAD_PATH.unshift(File.expand_path("../", __FILE__))
 require 'bundler'
 Bundler.require
 
+require 'fileutils'
 require 'csv'
 require 'odca.rb'
 require 'json'
@@ -69,7 +70,9 @@ records.each do |row|
       puts "Writing #{obj.class.name}: #{obj.name}"
       if obj.class.name == "SchemaBase" 
         puts "Create dir"
-        Dir.mkdir "output/"+obj.name unless Dir.exist? "output/"+obj.name
+        unless Dir.exist?("output/"+obj.name)
+          FileUtils.mkdir_p("output/"+obj.name)
+        end
         File.open("output/#{obj.name}.json","w") do |f|
           f.write(JSON.pretty_generate(obj))
         end
