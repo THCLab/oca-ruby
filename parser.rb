@@ -50,10 +50,7 @@ columns_number.times { |i|
 }
 
 # Drop header before start filling the object
-records = records.drop(0)
-records = records.drop(1)
-records = records.drop(2)
-records = records.drop(3)
+records.slice!(0, 4)
 puts "Overlays loaded, start creating objects"
 records.each do |row|
   # Save it only if schema base change which means that we parsed all attributes for
