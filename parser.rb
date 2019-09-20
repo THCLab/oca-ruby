@@ -53,16 +53,18 @@ records = records.drop(2)
 records = records.drop(3)
 puts "Overlays loaded, start creating objects"
 records.each do |row|
+
   # Save it only if schema base change which means that we parsed all attributes for 
   # previous schema base
   if schema_base.name != row[0] and schema_base.name != nil
     objects = [schema_base]
+
     objects << overlays.values
 
     # Calculate hl for schema_base
     base_hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(schema_base)).to_i(16))
     objects.flatten.each { |obj|
-      puts "Writing #{obj.class.name}"
+      puts "Writing #{obj.class.name}: #{obj.name}"
       if obj.class.name == "SchemaBase" 
         puts "Create dir"
         Dir.mkdir "output/"+obj.name unless Dir.exist? "output/"+obj.name
@@ -86,13 +88,13 @@ records.each do |row|
 
     # Reset base object, overlays and temporary attributes
     schema_base = SchemaBase.new
-
     overlays.each { |index, overlay|
-      overlays[index] =
       newOverlay = overlay.class.new
       newOverlay.role = overlay.role
       newOverlay.purpose = overlay.purpose
       newOverlay.language = overlay.language if defined? overlay.language
+      overlays[index] = newOverlay
+
     }
 
     attrs = {}
@@ -114,13 +116,13 @@ records.each do |row|
   # START Schema base object 
   schema_base.name = row[0]
   schema_base.description = row[1]
-  schema_base.classification = row[5]
+  schema_base.classification = row[2]
 
-  attr_name = row[2]
-  attr_type = row[3]
+  attr_name = row[3]
+  attr_type = row[4]
   attrs[attr_name] = attr_type
   # PII
-  if row[4] == "Y"
+  if row[5] == "Y"
     pii << attr_name
   end
 
@@ -133,60 +135,69 @@ records.each do |row|
   overlays.each { |index,overlay| 
     case overlay.class.name
     when "FormatOverlay"
+      formats[index] = {} if formats[index] == nil
       unless row[index].to_s.strip.empty?
-        formats[attr_name] = row[index]
+        formats[index][attr_name] = row[index]
       end
-      overlay.attr_formats = formats
+      overlay.attr_formats = formats[index]
       overlay.description = "Attribute formats for #{schema_base.name}"
     when "LabelOverlay"
       if row[index]
-        labels[attr_name] = row[index].split("|")[-1].strip if row[index]
+        labels[index] = {} if labels[index] == nil
+        labels[index][attr_name] = row[index].split("|")[-1].strip if row[index]
         # TODO support for nested categories
         tmp = row[index].split("|")[0..-2]
-        categories << tmp
+        categories[index] = [] if categories[index] == nil
+        categories[index] << tmp
         tmp.each do |c|
           h = c.strip.downcase.gsub(/\s+/, "_").to_sym
-          category_labels[h] = c
+          category_labels[index] = {} if category_labels[index] == nil
+          category_labels[index][h] = c
         end
       end
       overlay.description = "Category and attribute labels for #{schema_base.name}"
-      overlay.attr_labels = labels
-      overlay.attr_categories = categories.flatten.uniq.map { |i|
+      overlay.attr_labels = labels[index]
+      overlay.attr_categories = categories[index].flatten.uniq.map { |i|
         i.strip.downcase.gsub(/\s+/, "_").to_sym
       }
-      overlay.category_labels = category_labels
+      overlay.category_labels = category_labels[index]
     when "EncodeOverlay"
+      encoding[index] = {} if encoding[index] == nil
       unless row[index].to_s.strip.empty?
-        encoding[attr_name] = row[index]
+        encoding[index][attr_name] = row[index]
       end
       overlay.description = "Character set encoding for #{schema_base.name}"
-      overlay.attr_encoding = encoding
+      overlay.attr_encoding = encoding[index]
     when "EntryOverlay"
+      entries[index] = {} if entries[index] == nil
       unless row[index].to_s.strip.empty?
         value = row[index].to_s.strip
         values = value.split("|")
-        entries[attr_name] = values
+        entries[index][attr_name] = values
       end
       overlay.description = "Field entries for #{schema_base.name}"
-      overlay.attr_entries = entries
+      overlay.attr_entries = entries[index]
     when "InformationOverlay"
+      information[index] = {} if information[index] == nil
       unless row[index].to_s.strip.empty?
-        information[attr_name] = row[index]
+        information[index][attr_name] = row[index]
       end
       overlay.description = "Informational items for #{schema_base.name}"
-      overlay.attr_information = information
+      overlay.attr_information = information[index]
     when "SourceOverlay"
+      sources[index] = {} if sources[index] == nil
       unless row[index].to_s.strip.empty?
-        sources[attr_name] = ""
+        sources[index][attr_name] = ""
       end
       overlay.description = "Source endpoints for #{schema_base.name}"
-      overlay.attr_sources = sources
+      overlay.attr_sources = sources[index]
     when "ReviewOverlay"
+      review[index] = {} if review[index] == nil
       unless row[index].to_s.strip.empty?
-        review[attr_name] = ""
+        review[index][attr_name] = ""
       end
       overlay.description = "Field entry review comments for #{schema_base.name}"
-      overlay.attr_comments = review
+      overlay.attr_comments = review[index]
     else
       puts "Error uknown overlay: #{overlay}"
     end
