@@ -19,7 +19,6 @@ schema_base = SchemaBase.new
 
 attrs = {}
 pii = []
-formats = {}
 labels = {}
 categories = []
 category_labels = {}
@@ -100,7 +99,6 @@ records.each do |row|
 
     attrs = {}
     pii = []
-    formats = {}
     labels = {}
     categories = []
     category_labels = {}
@@ -136,11 +134,7 @@ records.each do |row|
   overlays.each { |index,overlay|
     case overlay.class.name
     when "FormatOverlay"
-      formats[index] = {} if formats[index] == nil
-      unless row[index].to_s.strip.empty?
-        formats[index][attr_name] = row[index]
-      end
-      overlay.attr_formats = formats[index]
+      overlay.add_format(FormatOverlay::Format.new(attr_name, row[index]))
       overlay.description = "Attribute formats for #{schema_base.name}"
     when "LabelOverlay"
       if row[index]
