@@ -13,9 +13,9 @@ class Overlay
       schema_base: @schema_base_id,
       type: @type,
       description: @description,
-      issued_by: @issued_by,
-      role: @role,
-      purpose: @purpose
+      issued_by: @issued_by || "",
+      role: @role || "",
+      purpose: @purpose || ""
     }
   end
 

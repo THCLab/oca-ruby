@@ -11,8 +11,8 @@ class SchemaBase
       name: @name,
       type: "spec/schame_base/1.0",
       description: @description,
-      classification: @classification,
-      issued_by: @issued_by,
+      classification: @classification || "",
+      issued_by: @issued_by || "",
       attributes: @attributes,
       pii_attributes: @pii_attributes
     }
