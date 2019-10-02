@@ -1,6 +1,6 @@
 class EncodeOverlay < Overlay
 
-  attr_accessor :attr_encoding, :language
+  attr_accessor :attr_encoding
 
   def initialize(schema_base_id = "", issued_by = "")
     super(schema_base_id, issued_by)
@@ -10,7 +10,6 @@ class EncodeOverlay < Overlay
   def as_json(options={})
     super.merge!(
     {
-      language: @language,
       # If there is no attribute specify on the list default is this
       default_encoding: "utf-8",
       attr_encoding: @attr_encoding
