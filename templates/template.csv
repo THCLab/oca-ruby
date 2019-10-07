@@ -1,0 +1,4 @@
+;;;;;;;;;Role;Role;Role;Role;Role2;Role2;Role2;Role2;Role2;Role2;Role2;Role2;Role2;Role3;Role4;Role4;Role4
+;;;;;;;;;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose;Purpose
+Schema Base [SB];SB: Description;SB: Classification;SB: Attribute Name;SB: Attribute Type;SB: PII;Format Overlay;Label Overlay;Encode Overlay;Entry Overlay;Information Overlay;Source Overlay;Information Overlay;Entry Overlay;Information Overlay;Source Overlay;Review Overlay;Information Overlay;Entry Overlay;Information Overlay;Review Overlay;Review Overlay;Review Overlay;Information Overlay;Source Overlay;Information Overlay
+;;;;;;;en_US;en_US;en_US;en_US;;en_US;en_US;en_US;;en_US;en_US;en_US;en_US;en_US;en_US;en_US;en_US;;en_US
