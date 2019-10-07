@@ -154,7 +154,7 @@ records.each_with_index do |row, i|
       end
       overlay.description = "Category and attribute labels for #{schema_base.name}"
       overlay.attr_labels = labels[index]
-      overlay.attr_categories = categories[index].flatten.uniq.map { |i|
+      overlay.attr_categories = categories[index]&.flatten&.uniq&.map { |i|
         i.strip.downcase.gsub(/\s+/, "_").to_sym
       }
       overlay.category_labels = category_labels[index]
