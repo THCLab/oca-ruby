@@ -43,6 +43,7 @@ columns_number.times { |i|
     overlay.purpose = records[1][i]
     overlay.language = records[3][i] if defined? overlay.language
     overlays[i] = overlay
+    puts "Overlay loaded: #{overlayClazz}"
   rescue => e
     puts "Warrning: problem reading #{overlayName}, probably not overlay: #{e}"
   end
@@ -51,10 +52,11 @@ columns_number.times { |i|
 # Drop header before start filling the object
 records.slice!(0, 4)
 puts "Overlays loaded, start creating objects"
-records.each do |row|
+rows_count = records.size
+records.each_with_index do |row, i|
   # Save it only if schema base change which means that we parsed all attributes for
-  # previous schema base
-  if schema_base.name != row[0] and schema_base.name != nil
+  # previous schema base or end of rows
+  if (schema_base.name != row[0] and schema_base.name != nil) or (i+1 == rows_count)
     objects = [schema_base]
 
     objects << overlays.values
