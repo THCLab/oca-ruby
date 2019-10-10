@@ -49,22 +49,30 @@ class SchemaBase
   end
 
   class Attribute
-    attr_reader :name, :type, :is_pii
+    attr_reader :name, :type, :pii
 
-    def initialize(name:, type:, is_pii:)
+    def self.new(**args)
+      super(
+        name: args[:name],
+        type: args[:type],
+        pii: args[:pii].to_s.strip
+      )
+    end
+
+    def initialize(name:, type:, pii:)
       @name = name
       @type = type
-      @is_pii = is_pii
+      @pii = pii
     end
 
     def pii?
-      case is_pii
+      case pii
       when 'Y'
         true
       when ''
         false
       else
-        raise 'Unrecognized sign'
+        raise RuntimeError.new("Unrecognized character: #{pii}")
       end
     end
   end

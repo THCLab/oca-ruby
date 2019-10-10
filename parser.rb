@@ -121,13 +121,12 @@ records.each_with_index do |row, i|
 
   attr_name = row[3]
   attr_type = row[4]
-  attr_is_pii = row[5]
 
   schema_base.add_attribute(
     SchemaBase::Attribute.new(
       name: attr_name,
       type: attr_type,
-      is_pii: attr_is_pii
+      pii: row[5]
     )
   )
   # END Schema base object

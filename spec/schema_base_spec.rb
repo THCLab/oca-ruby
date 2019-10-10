@@ -12,7 +12,7 @@ RSpec.describe SchemaBase do
 
         schema_base.add_attribute(
           described_class::Attribute.new(
-            name: 'attr_name', type: 'attr_type', is_pii: 'Y'
+            name: 'attr_name', type: 'attr_type', pii: 'Y'
           )
         )
       end
@@ -37,13 +37,13 @@ RSpec.describe SchemaBase do
   describe described_class::Attribute do
     let(:attribute) do
       described_class.new(
-        name: 'attr_name', type: 'attr_type', is_pii: is_pii
+        name: 'attr_name', type: 'attr_type', pii: pii
       )
     end
 
     describe '#pii?' do
       context 'attribute is pii' do
-        let(:is_pii) { 'Y' }
+        let(:pii) { 'Y' }
 
         it 'returns true' do
           expect(attribute.pii?).to be true
@@ -51,7 +51,7 @@ RSpec.describe SchemaBase do
       end
 
       context 'attribute is not pii' do
-        let(:is_pii) { '' }
+        let(:pii) { '' }
 
         it 'returns false' do
           expect(attribute.pii?).to be false
@@ -59,10 +59,13 @@ RSpec.describe SchemaBase do
       end
 
       context 'attribute pii is unrecognized' do
-        let(:is_pii) { 'sth' }
+        let(:pii) { 'sth' }
 
         it 'raises error' do
-          expect { attribute.pii? }.to raise_error('Unrecognized sign')
+          expect { attribute.pii? }.to raise_error(
+            RuntimeError,
+            'Unrecognized character: sth'
+          )
         end
       end
     end
