@@ -121,15 +121,15 @@ records.each_with_index do |row, i|
 
   attr_name = row[3]
   attr_type = row[4]
-  attrs[attr_name] = attr_type
-  # PII
-  if row[5] == "Y"
-    pii << attr_name
-  end
+  attr_is_pii = row[5]
 
-  schema_base.attributes = attrs
-  schema_base.pii_attributes = pii
-
+  schema_base.add_attribute(
+    SchemaBase::Attribute.new(
+      name: attr_name,
+      type: attr_type,
+      is_pii: attr_is_pii
+    )
+  )
   # END Schema base object
 
   # START Overlays
