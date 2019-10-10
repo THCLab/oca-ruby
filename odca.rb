@@ -1,4 +1,4 @@
-require './SchemaBase.rb'
+require 'schema_base'
 require './overlays/Overlay.rb'
 require './overlays/FormatOverlay.rb'
 require './overlays/LabelOverlay.rb'

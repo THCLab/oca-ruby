@@ -1,4 +1,4 @@
-require './SchemaBase'
+require 'schema_base'
 
 RSpec.describe SchemaBase do
   let(:schema_base) { described_class.new }
