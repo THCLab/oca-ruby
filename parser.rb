@@ -5,6 +5,6 @@ Bundler.require
 filename = ARGV[0]
 raise RuntimeError.new, 'Please provide input file as an argument' unless filename
 
-require 'big_parser'
+require 'odca/big_parser'
 
-BigParser.new(filename).call
+Odca::BigParser.new(filename).call
