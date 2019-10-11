@@ -1,10 +1,9 @@
 require 'csv'
 require 'fileutils'
 require 'odca/odca.rb'
+require 'odca/hashlink_generator'
 require 'json'
 require 'pp'
-require 'digest/sha2'
-require 'base58'
 
 module Odca
   class BigParser
@@ -64,7 +63,7 @@ module Odca
           objects << overlays.values
 
           # Calculate hl for schema_base
-          base_hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(schema_base)).to_i(16))
+          base_hl = 'hl:' + HashlinkGenerator.call(schema_base)
           objects.flatten.each { |obj|
             puts "Writing #{obj.class.name}: #{obj.name}"
             if obj.class.name.split('::').last == "SchemaBase"
@@ -80,7 +79,7 @@ module Odca
               obj.schema_base_id = base_hl
               if obj.is_valid?
                 puts "Object is valid saving ..."
-                hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(obj)).to_i(16))
+                hl = 'hl:' + HashlinkGenerator.call(obj)
                 File.open("output/#{schema_base.name}/#{obj.class.name.split('::').last}-#{hl}.json","w") do |f|
                   f.write(JSON.pretty_generate(obj))
                 end
