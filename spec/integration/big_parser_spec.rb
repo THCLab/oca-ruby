@@ -1,7 +1,7 @@
-require 'big_parser'
+require 'odca/big_parser'
 require "json"
 
-RSpec.describe BigParser do
+RSpec.describe Odca::BigParser do
   let(:topic)  { described_class.new(filename) }
 
   let(:filename) { File.join(SPEC_ROOT, 'shared/example.csv') }

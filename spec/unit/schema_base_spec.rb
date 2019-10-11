@@ -1,6 +1,6 @@
-require 'schema_base'
+require 'odca/schema_base'
 
-RSpec.describe SchemaBase do
+RSpec.describe Odca::SchemaBase do
   let(:schema_base) { described_class.new }
 
   describe '#to_h' do
