@@ -1,7 +1,7 @@
 require 'odca/schema_base'
 require 'odca/overlays/Overlay.rb'
 require 'odca/overlays/FormatOverlay.rb'
-require 'odca/overlays/LabelOverlay.rb'
+require 'odca/overlays/label_overlay.rb'
 require 'odca/overlays/EncodeOverlay.rb'
 require 'odca/overlays/EntryOverlay.rb'
 require 'odca/overlays/InformationOverlay.rb'

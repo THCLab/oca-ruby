@@ -144,24 +144,14 @@ module Odca
             overlay.description = "Attribute formats for #{schema_base.name}"
           when "LabelOverlay"
             if row[index]
-              labels[index] = {} if labels[index] == nil
-              labels[index][attr_name] = row[index].split("|")[-1].strip if row[index]
-              # TODO support for nested categories
-              tmp = row[index].split("|")[0..-2]
-              categories[index] = [] if categories[index] == nil
-              categories[index] << tmp
-              tmp.each do |c|
-                h = c.strip.downcase.gsub(/\s+/, "_").to_sym
-                category_labels[index] = {} if category_labels[index] == nil
-                category_labels[index][h] = c
-              end
+              overlay.add_label_attribute(
+                Odca::Overlays::LabelOverlay::LabelAttribute.new(
+                  name: attr_name,
+                  value: row[index]
+                )
+              )
             end
             overlay.description = "Category and attribute labels for #{schema_base.name}"
-            overlay.attr_labels = labels[index]
-            overlay.attr_categories = categories[index]&.flatten&.uniq&.map { |i|
-              i.strip.downcase.gsub(/\s+/, "_").to_sym
-            }
-            overlay.category_labels = category_labels[index]
           when "EncodeOverlay"
             encoding[index] = {} if encoding[index] == nil
             unless row[index].to_s.strip.empty?
