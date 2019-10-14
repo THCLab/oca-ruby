@@ -15,6 +15,11 @@ RSpec.describe Odca::SchemaBase do
             name: 'attr_name', type: 'attr_type', pii: 'Y'
           )
         )
+        schema_base.add_attribute(
+          described_class::Attribute.new(
+            name: 'second_attr', type: 'attr_type', pii: ''
+          )
+        )
       end
 
       it 'returns hash' do
@@ -26,7 +31,8 @@ RSpec.describe Odca::SchemaBase do
           classification: 'sb_class',
           issued_by: '',
           :attributes => {
-            'attr_name' => 'attr_type'
+            'attr_name' => 'attr_type',
+            'second_attr' => 'attr_type'
           },
           pii_attributes: ['attr_name']
         )
