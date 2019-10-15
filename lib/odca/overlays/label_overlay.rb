@@ -1,5 +1,5 @@
 require 'odca/overlays/header'
-require 'odca/null_label_value'
+require 'odca/null_value'
 
 module Odca
   module Overlays
@@ -69,31 +69,45 @@ module Odca
       end
 
       class LabelAttribute
-        attr_reader :name, :value
+        attr_reader :name, :category, :label
 
-        def initialize(name:, value:)
+        def initialize(name:, category:, label:)
           @name = name
+          @category = category
+          @label = label
+        end
+      end
+
+      class InputValidator
+        attr_reader :attr_name, :value
+
+        def initialize(attr_name:, value:)
+          if attr_name.strip.empty?
+            raise 'Attribute name is expected to be non empty String'
+          end
+
+          @attr_name = attr_name
           @value = value
         end
 
-        def category
-          @category ||= splited_value[0]
-        end
+        def call
+          category = Odca::NullValue.new
+          label = Odca::NullValue.new
 
-        def label
-          @label ||= splited_value[1]
-        end
-
-        private def splited_value
-          result = value.split('|')
-          case result.length
+          splited = value.split('|')
+          case splited.length
           when 1
-            result.unshift('').map(&:strip)
+            label = value.strip
           when 2
-            result.map(&:strip)
-          else
-            Odca::NullLabelValue.new
+            category = splited[0].strip
+            label = splited[1].strip
           end
+
+          {
+            name: attr_name.strip,
+            category: category,
+            label: label
+          }
         end
       end
     end

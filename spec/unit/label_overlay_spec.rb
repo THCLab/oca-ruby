@@ -13,7 +13,9 @@ RSpec.describe Odca::Overlays::LabelOverlay do
 
         overlay.add_label_attribute(
           described_class::LabelAttribute.new(
-            name: 'attr_name', value: 'Cat | lab'
+            described_class::InputValidator.new(
+              attr_name: 'attr_name', value: 'Cat | lab'
+            ).call
           )
         )
       end
@@ -48,7 +50,9 @@ RSpec.describe Odca::Overlays::LabelOverlay do
     context 'when label_attribute is provided correctly' do
       let(:attribute) do
         described_class::LabelAttribute.new(
-          name: 'attr', value: 'cat | lab'
+          described_class::InputValidator.new(
+            attr_name: 'attr', value: 'cat | lab'
+          ).call
         )
       end
 
@@ -65,30 +69,22 @@ RSpec.describe Odca::Overlays::LabelOverlay do
         expect(overlay.label_attributes).to be_empty
       end
     end
-
-    context 'when label_attribute name is empty' do
-      let(:attribute) do
-        described_class::LabelAttribute.new(
-          name: ' ', value: 'cat | lab'
-        )
-      end
-
-      it 'ignores label_attribute' do
-        expect(overlay.label_attributes).to be_empty
-      end
-    end
   end
 
   context 'generating categories and labels collections' do
     before(:each) do
       overlay.add_label_attribute(
         described_class::LabelAttribute.new(
-          name: 'attr_name', value: 'Cat | lab'
+          described_class::InputValidator.new(
+            attr_name: 'attr_name', value: 'Cat | lab'
+          ).call
         )
       )
       overlay.add_label_attribute(
         described_class::LabelAttribute.new(
-          name: 'sec_attr', value: 'Label'
+          described_class::InputValidator.new(
+            attr_name: 'sec_attr', value: 'Label'
+          ).call
         )
       )
     end
@@ -118,35 +114,46 @@ RSpec.describe Odca::Overlays::LabelOverlay do
     end
   end
 
-  describe described_class::LabelAttribute do
-    let(:attribute) do
-      described_class.new(name: 'attr_name', value: value)
-    end
-
-    context 'record contains one pipe' do
-      let(:value) { 'C a t | lab' }
-
-      it 'splits into category and label' do
-        expect(attribute.category).to eql('C a t')
-        expect(attribute.label).to eql('lab')
+  describe described_class::InputValidator do
+    describe '#call' do
+      let(:validator) do
+        described_class.new(attr_name: 'attr_name', value: value)
       end
-    end
 
-    context "record doesn't contain any pipes" do
-      let(:value) { 'Label' }
+      context 'record contains one pipe' do
+        let(:value) { 'C a t | lab' }
 
-      it 'sets label as value' do
-        expect(attribute.category).to eql('')
-        expect(attribute.label).to eql('Label')
+        it 'splits into category and label' do
+          expect(validator.call).to include(
+            name: 'attr_name',
+            category: 'C a t',
+            label: 'lab'
+          )
+        end
       end
-    end
 
-    context 'record contains many pipes' do
-      let(:value) { '| cat | lab' }
+      context "record doesn't contain any pipes" do
+        let(:value) { 'Label' }
 
-      it 'sets category and label as empty strings' do
-        expect(attribute.category).to eql('')
-        expect(attribute.label).to eql('')
+        it 'sets label as value' do
+          expect(validator.call).to include(
+            name: 'attr_name',
+            category: be_a(Odca::NullValue),
+            label: 'Label'
+          )
+        end
+      end
+
+      context 'record contains many pipes' do
+        let(:value) { '| cat | lab' }
+
+        it 'sets category and label as empty strings' do
+          expect(validator.call).to include(
+            name: 'attr_name',
+            category: be_a(Odca::NullValue),
+            label: be_a(Odca::NullValue)
+          )
+        end
       end
     end
   end

@@ -146,8 +146,10 @@ module Odca
             if row[index]
               overlay.add_label_attribute(
                 Odca::Overlays::LabelOverlay::LabelAttribute.new(
-                  name: attr_name,
-                  value: row[index]
+                  Odca::Overlays::LabelOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
                 )
               )
             end
