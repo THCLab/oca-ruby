@@ -170,14 +170,17 @@ module Odca
             end
             overlay.description = "Character set encoding for #{schema_base.name}"
           when "EntryOverlay"
-            entries[index] = {} if entries[index] == nil
-            unless row[index].to_s.strip.empty?
-              value = row[index].to_s.strip
-              values = value.split("|")
-              entries[index][attr_name] = values
+            if row[index]
+              overlay.add_entry_attribute(
+                Odca::Overlays::EntryOverlay::EntryAttribute.new(
+                  Odca::Overlays::EntryOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Field entries for #{schema_base.name}"
-            overlay.attr_entries = entries[index]
           when "InformationOverlay"
             information[index] = {} if information[index] == nil
             unless row[index].to_s.strip.empty?

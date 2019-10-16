@@ -157,6 +157,58 @@ RSpec.describe Odca::BigParser do
           end
         end
       end
+
+      context 'when Entry Overlay is provided' do
+        let(:entry_overlays) do
+          Dir[File.join(
+            LIB_ROOT, 'output', schema_base_dir, 'EntryOverlay*.json'
+          )].map do |path|
+            JSON.load(File.open(path))
+          end
+        end
+
+        context 'for all schema bases' do
+          let(:schema_base_dir) { '*' }
+
+          it 'generates valid overlays output' do
+            entry_overlays.each do |overlay|
+              expect(overlay).to include(
+                'attr_entries', 'schema_base',
+                '@context' => 'https://odca.tech/overlays/v1',
+                'type' => 'spec/overlay/entry/1.0',
+                'language' => 'en_US'
+              )
+            end
+          end
+        end
+
+        context 'for Audit Overview schema base' do
+          let(:schema_base_dir) { 'AuditOverview' }
+          let(:overlay) { entry_overlays.first }
+
+          it 'attr_entries occur in attributes' do
+            expect(audit_overview_schema_base['attributes'].keys)
+              .to include(*overlay['attr_entries'].keys)
+          end
+
+          it 'attr_entries is filled' do
+            entry = if overlay['role'] == 'Supplier'
+                      overlay['attr_entries']['siteCountry']
+                    elsif overlay['role'] == 'Auditor'
+                      overlay['attr_entries']['auditType']
+                    end
+
+            expect(entry).not_to be_empty
+          end
+
+          it 'schema_base is filled correctly' do
+            expect(overlay['schema_base']).to eql(
+              "hl:#{Odca::HashlinkGenerator
+                .call(audit_overview_schema_base)}"
+            )
+          end
+        end
+      end
     end
   end
 end
