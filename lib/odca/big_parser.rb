@@ -136,9 +136,12 @@ module Odca
         overlays.each { |index,overlay|
           case overlay.class.name.split('::').last
           when "FormatOverlay"
-            overlay.add_format(
-              Odca::Overlays::FormatOverlay::Format.new(
-                attr_name, row[index]
+            overlay.add_format_attribute(
+              Odca::Overlays::FormatOverlay::FormatAttribute.new(
+                Odca::Overlays::FormatOverlay::InputValidator.new(
+                  attr_name: attr_name,
+                  value: row[index]
+                ).call
               )
             )
             overlay.description = "Attribute formats for #{schema_base.name}"
