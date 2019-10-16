@@ -182,12 +182,17 @@ module Odca
             end
             overlay.description = "Field entries for #{schema_base.name}"
           when "InformationOverlay"
-            information[index] = {} if information[index] == nil
-            unless row[index].to_s.strip.empty?
-              information[index][attr_name] = row[index]
+            if row[index]
+              overlay.add_information_attribute(
+                Odca::Overlays::InformationOverlay::InformationAttribute.new(
+                  Odca::Overlays::InformationOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Informational items for #{schema_base.name}"
-            overlay.attr_information = information[index]
           when "SourceOverlay"
             sources[index] = {} if sources[index] == nil
             unless row[index].to_s.strip.empty?
