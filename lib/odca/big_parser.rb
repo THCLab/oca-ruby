@@ -158,12 +158,17 @@ module Odca
             end
             overlay.description = "Category and attribute labels for #{schema_base.name}"
           when "EncodeOverlay"
-            encoding[index] = {} if encoding[index] == nil
-            unless row[index].to_s.strip.empty?
-              encoding[index][attr_name] = row[index]
+            if row[index]
+              overlay.add_encoding_attribute(
+                Odca::Overlays::EncodeOverlay::EncodingAttribute.new(
+                  Odca::Overlays::EncodeOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Character set encoding for #{schema_base.name}"
-            overlay.attr_encoding = encoding[index]
           when "EntryOverlay"
             entries[index] = {} if entries[index] == nil
             unless row[index].to_s.strip.empty?
