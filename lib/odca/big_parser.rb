@@ -206,12 +206,17 @@ module Odca
             end
             overlay.description = "Source endpoints for #{schema_base.name}"
           when "ReviewOverlay"
-            review[index] = {} if review[index] == nil
-            unless row[index].to_s.strip.empty?
-              review[index][attr_name] = ""
+            if row[index]
+              overlay.add_review_attribute(
+                Odca::Overlays::ReviewOverlay::ReviewAttribute.new(
+                  Odca::Overlays::ReviewOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Field entry review comments for #{schema_base.name}"
-            overlay.attr_comments = review[index]
           else
             puts "Error uknown overlay: #{overlay}"
           end

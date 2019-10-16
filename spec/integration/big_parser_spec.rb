@@ -317,6 +317,52 @@ RSpec.describe Odca::BigParser do
           end
         end
       end
+
+      context 'when Review Overlay is provided' do
+        let(:review_overlays) do
+          Dir[File.join(
+            LIB_ROOT, 'output', schema_base_dir, 'ReviewOverlay*.json'
+          )].map do |path|
+            JSON.load(File.open(path))
+          end
+        end
+
+        context 'for all schema bases' do
+          let(:schema_base_dir) { '*' }
+
+          it 'generates valid overlays output' do
+            review_overlays.each do |overlay|
+              expect(overlay).to include(
+                'attr_comments', 'schema_base',
+                '@context' => 'https://odca.tech/overlays/v1',
+                'type' => 'spec/overlay/review/1.0',
+                'language' => 'en_US'
+              )
+            end
+          end
+        end
+
+        context 'for FacilityBackground schema base' do
+          let(:schema_base_dir) { 'FacilityBackground' }
+          let(:overlay) { review_overlays.first }
+
+          it 'attr_comments keys occur in attributes' do
+            expect(facility_background_schema_base['attributes'].keys)
+              .to include(*overlay['attr_comments'].keys)
+          end
+
+          it 'attr_comments is filled' do
+            expect(overlay['attr_comments']).not_to be_empty
+          end
+
+          it 'schema_base is filled correctly' do
+            expect(overlay['schema_base']).to eql(
+              "hl:#{Odca::HashlinkGenerator
+                .call(facility_background_schema_base)}"
+            )
+          end
+        end
+      end
     end
   end
 end
