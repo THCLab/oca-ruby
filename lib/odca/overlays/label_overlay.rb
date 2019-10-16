@@ -32,7 +32,8 @@ module Odca
           language: language,
           attr_labels: attr_labels,
           attr_categories: attr_categories,
-          category_labels: category_labels
+          category_labels: category_labels,
+          category_attributes: category_attributes
         )
       end
 
@@ -66,6 +67,14 @@ module Odca
             next if cat.empty?
             memo[cat.downcase.gsub(/\s+/, '_').to_sym] = cat
           end
+      end
+
+      private def category_attributes
+        label_attributes.each_with_object({}) do |attr, memo|
+          next if attr.category.empty?
+          category_attr = attr.category.downcase.gsub(/\s+/, '_').to_sym
+          (memo[category_attr] ||= []) << attr.name
+        end
       end
 
       class LabelAttribute

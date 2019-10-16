@@ -18,6 +18,20 @@ RSpec.describe Odca::Overlays::LabelOverlay do
             ).call
           )
         )
+        overlay.add_label_attribute(
+          described_class::LabelAttribute.new(
+            described_class::InputValidator.new(
+              attr_name: 'sec_attr', value: 'Cat | Second label'
+            ).call
+          )
+        )
+        overlay.add_label_attribute(
+          described_class::LabelAttribute.new(
+            described_class::InputValidator.new(
+              attr_name: 'third_attr', value: 'Other category | label 3'
+            ).call
+          )
+        )
       end
 
       it 'returns filled hash' do
@@ -31,11 +45,18 @@ RSpec.describe Odca::Overlays::LabelOverlay do
           purpose: 'purpose',
           language: 'en',
           attr_labels: {
-            'attr_name' => 'lab'
+            'attr_name' => 'lab',
+            'sec_attr' => 'Second label',
+            'third_attr' => 'label 3'
           },
-          attr_categories: [:cat],
+          attr_categories: %i[cat other_category],
           category_labels: {
-            cat: 'Cat'
+            cat: 'Cat',
+            other_category: 'Other category'
+          },
+          category_attributes: {
+            cat: %w[attr_name sec_attr],
+            other_category: %w[third_attr]
           }
         )
       end
@@ -110,6 +131,13 @@ RSpec.describe Odca::Overlays::LabelOverlay do
       it 'returns hash of categories symbols and labels' do
         expect(overlay.__send__(:category_labels))
           .to include(cat: 'Cat')
+      end
+    end
+
+    describe '#category_attributes' do
+      it 'returns hash of categories with array of attr_names' do
+        expect(overlay.__send__(:category_attributes))
+          .to include(cat: ['attr_name'])
       end
     end
   end

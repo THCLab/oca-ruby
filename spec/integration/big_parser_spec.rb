@@ -45,7 +45,7 @@ RSpec.describe Odca::BigParser do
             label_overlays.each do |overlay|
               expect(overlay).to include(
                 'attr_labels', 'attr_categories', 'category_labels',
-                'schema_base',
+                'category_attributes', 'schema_base',
                 '@context' => 'https://odca.tech/overlays/v1',
                 'type' => 'spec/overlay/label/1.0',
                 'language' => 'en_US'
