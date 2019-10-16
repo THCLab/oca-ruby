@@ -1,10 +1,9 @@
 require 'csv'
 require 'fileutils'
 require 'odca/odca.rb'
+require 'odca/hashlink_generator'
 require 'json'
 require 'pp'
-require 'digest/sha2'
-require 'base58'
 
 module Odca
   class BigParser
@@ -64,7 +63,7 @@ module Odca
           objects << overlays.values
 
           # Calculate hl for schema_base
-          base_hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(schema_base)).to_i(16))
+          base_hl = 'hl:' + HashlinkGenerator.call(schema_base)
           objects.flatten.each { |obj|
             puts "Writing #{obj.class.name}: #{obj.name}"
             if obj.class.name.split('::').last == "SchemaBase"
@@ -80,7 +79,7 @@ module Odca
               obj.schema_base_id = base_hl
               if obj.is_valid?
                 puts "Object is valid saving ..."
-                hl = "hl:" + Base58.encode(Digest::SHA2.hexdigest(JSON.pretty_generate(obj)).to_i(16))
+                hl = 'hl:' + HashlinkGenerator.call(obj)
                 File.open("output/#{schema_base.name}/#{obj.class.name.split('::').last}-#{hl}.json","w") do |f|
                   f.write(JSON.pretty_generate(obj))
                 end
@@ -145,24 +144,16 @@ module Odca
             overlay.description = "Attribute formats for #{schema_base.name}"
           when "LabelOverlay"
             if row[index]
-              labels[index] = {} if labels[index] == nil
-              labels[index][attr_name] = row[index].split("|")[-1].strip if row[index]
-              # TODO support for nested categories
-              tmp = row[index].split("|")[0..-2]
-              categories[index] = [] if categories[index] == nil
-              categories[index] << tmp
-              tmp.each do |c|
-                h = c.strip.downcase.gsub(/\s+/, "_").to_sym
-                category_labels[index] = {} if category_labels[index] == nil
-                category_labels[index][h] = c
-              end
+              overlay.add_label_attribute(
+                Odca::Overlays::LabelOverlay::LabelAttribute.new(
+                  Odca::Overlays::LabelOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Category and attribute labels for #{schema_base.name}"
-            overlay.attr_labels = labels[index]
-            overlay.attr_categories = categories[index]&.flatten&.uniq&.map { |i|
-              i.strip.downcase.gsub(/\s+/, "_").to_sym
-            }
-            overlay.category_labels = category_labels[index]
           when "EncodeOverlay"
             encoding[index] = {} if encoding[index] == nil
             unless row[index].to_s.strip.empty?
