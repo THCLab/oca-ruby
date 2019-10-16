@@ -194,12 +194,17 @@ module Odca
             end
             overlay.description = "Informational items for #{schema_base.name}"
           when "SourceOverlay"
-            sources[index] = {} if sources[index] == nil
-            unless row[index].to_s.strip.empty?
-              sources[index][attr_name] = ""
+            if row[index]
+              overlay.add_source_attribute(
+                Odca::Overlays::SourceOverlay::SourceAttribute.new(
+                  Odca::Overlays::SourceOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Source endpoints for #{schema_base.name}"
-            overlay.attr_sources = sources[index]
           when "ReviewOverlay"
             review[index] = {} if review[index] == nil
             unless row[index].to_s.strip.empty?

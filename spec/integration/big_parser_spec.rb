@@ -19,6 +19,12 @@ RSpec.describe Odca::BigParser do
         )))
       end
 
+      let(:facility_background_schema_base) do
+        JSON.load(File.open(File.join(
+          LIB_ROOT, 'output', 'FacilityBackground.json'
+        )))
+      end
+
       it 'generates valid output' do
         expect(audit_overview_schema_base).to include(
           'attributes',
@@ -262,6 +268,51 @@ RSpec.describe Odca::BigParser do
             expect(overlay['schema_base']).to eql(
               "hl:#{Odca::HashlinkGenerator
                 .call(audit_overview_schema_base)}"
+            )
+          end
+        end
+      end
+
+      context 'when Source Overlay is provided' do
+        let(:source_overlays) do
+          Dir[File.join(
+            LIB_ROOT, 'output', schema_base_dir, 'SourceOverlay*.json'
+          )].map do |path|
+            JSON.load(File.open(path))
+          end
+        end
+
+        context 'for all schema bases' do
+          let(:schema_base_dir) { '*' }
+
+          it 'generates valid overlays output' do
+            source_overlays.each do |overlay|
+              expect(overlay).to include(
+                'attr_sources', 'schema_base',
+                '@context' => 'https://odca.tech/overlays/v1',
+                'type' => 'spec/overlay/source/1.0'
+              )
+            end
+          end
+        end
+
+        context 'for FacilityBackground schema base' do
+          let(:schema_base_dir) { 'FacilityBackground' }
+          let(:overlay) { source_overlays.first }
+
+          it 'attr_sources keys occur in attributes' do
+            expect(facility_background_schema_base['attributes'].keys)
+              .to include(*overlay['attr_sources'].keys)
+          end
+
+          it 'attr_sources is filled' do
+            expect(overlay['attr_sources']).not_to be_empty
+          end
+
+          it 'schema_base is filled correctly' do
+            expect(overlay['schema_base']).to eql(
+              "hl:#{Odca::HashlinkGenerator
+                .call(facility_background_schema_base)}"
             )
           end
         end
