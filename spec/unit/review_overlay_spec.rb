@@ -1,14 +1,18 @@
 require 'odca/overlays/review_overlay'
 
 RSpec.describe Odca::Overlays::ReviewOverlay do
-  let(:overlay) { described_class.new }
+  let(:overlay) do
+    described_class.new(
+      Odca::Overlays::Header.new(
+        role: 'role', purpose: 'purpose'
+      )
+    )
+  end
 
   describe '#to_h' do
     context 'review overlay has review attributes' do
       before(:each) do
         overlay.description = 'desc'
-        overlay.role = 'role'
-        overlay.purpose = 'purpose'
         overlay.language = 'en'
 
         overlay.add_review_attribute(

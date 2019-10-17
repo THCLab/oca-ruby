@@ -1,14 +1,18 @@
 require 'odca/overlays/format_overlay'
 
 RSpec.describe Odca::Overlays::FormatOverlay do
-  let(:overlay) { described_class.new }
+  let(:overlay) do
+    described_class.new(
+      Odca::Overlays::Header.new(
+        role: 'role', purpose: 'purpose'
+      )
+    )
+  end
 
   describe '#to_h' do
     context 'format overlay has format attributes' do
       before(:each) do
         overlay.description = 'desc'
-        overlay.role = 'role'
-        overlay.purpose = 'purpose'
 
         overlay.add_format_attribute(
           described_class::FormatAttribute.new(

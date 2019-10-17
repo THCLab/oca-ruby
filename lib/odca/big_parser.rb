@@ -32,23 +32,26 @@ module Odca
 
       columns_number = records[0].size
 
-      puts "Reading overlays ..."
-      columns_number.times { |i|
-        overlayName = records[2][i]
+      puts 'Reading overlays ...'
+      columns_number.times do |i|
+        overlay_name = records[2][i]
         begin
-          overlayClazz = Object.const_get(
-            "Odca::Overlays::#{overlayName.gsub(' ', '')}"
+          overlay_clazz = Odca::Overlays.const_get(
+            overlay_name.delete(' ')
           )
-          overlay = overlayClazz.new
-          overlay.role = records[0][i]
-          overlay.purpose = records[1][i]
+          overlay = overlay_clazz.new(
+            Odca::Overlays::Header.new(
+              role: records[0][i],
+              purpose: records[1][i]
+            )
+          )
           overlay.language = records[3][i] if defined? overlay.language
           overlays[i] = overlay
-          puts "Overlay loaded: #{overlayClazz}"
+          puts "Overlay loaded: #{overlay_clazz}"
         rescue => e
-          puts "Warrning: problem reading #{overlayName}, probably not overlay: #{e}"
+          puts "Warrning: problem reading #{overlay_name}, probably not overlay: #{e}"
         end
-      }
+      end
 
       # Drop header before start filling the object
       records.slice!(0, 4)
@@ -65,8 +68,9 @@ module Odca
           # Calculate hl for schema_base
           base_hl = 'hl:' + HashlinkGenerator.call(schema_base)
           objects.flatten.each { |obj|
-            puts "Writing #{obj.class.name}: #{obj.name}"
+            puts "Writing #{obj.class.name}"
             if obj.class.name.split('::').last == "SchemaBase"
+              puts "SchemaBase: #{obj.name}"
               puts "Create dir"
               unless Dir.exist?("output/"+obj.name)
                 FileUtils.mkdir_p("output/"+obj.name)
@@ -92,12 +96,14 @@ module Odca
           # Reset base object, overlays and temporary attributes
           schema_base = SchemaBase.new
           overlays.each { |index, overlay|
-            newOverlay = overlay.class.new
-            newOverlay.role = overlay.role
-            newOverlay.purpose = overlay.purpose
-            newOverlay.language = overlay.language if defined? overlay.language
-            overlays[index] = newOverlay
-
+            new_overlay = overlay.class.new(
+              Odca::Overlays::Header.new(
+                role: overlay.role,
+                purpose: overlay.purpose
+              )
+            )
+            new_overlay.language = overlay.language if defined? overlay.language
+            overlays[index] = new_overlay
           }
 
           attrs = {}
