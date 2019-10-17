@@ -14,6 +14,10 @@ RSpec.describe Odca::BigParser do
         topic.call
       end
 
+      after(:each) do
+        %x(`rm -rf #{output_dir}`)
+      end
+
       let(:audit_overview_schema_base) do
         JSON.load(File.open(File.join(
           LIB_ROOT, output_dir, 'AuditOverview.json'
