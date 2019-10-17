@@ -5,7 +5,7 @@ module Odca
     extend Forwardable
     attr_reader :parent, :overlay
 
-    def_delegator :overlay, :is_valid?
+    def_delegator :overlay, :empty?
 
     def initialize(parent:, overlay:)
       @parent = parent

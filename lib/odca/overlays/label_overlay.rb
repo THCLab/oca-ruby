@@ -33,10 +33,8 @@ module Odca
         )
       end
 
-      # @deprecated
-      def is_valid?
-        # no way to be invalid with implementation assured by tests
-        true
+      def empty?
+        label_attributes.empty?
       end
 
       def add_label_attribute(label_attribute)

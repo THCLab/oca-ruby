@@ -7,10 +7,11 @@ require 'pp'
 
 module Odca
   class BigParser
-    attr_reader :records
+    attr_reader :records, :output_dir
 
-    def initialize(filename)
+    def initialize(filename, output_dir)
       @records = CSV.read(filename, col_sep: ';')
+      @output_dir = output_dir
     end
 
     def call
@@ -48,39 +49,10 @@ module Odca
         # Save it only if schema base change which means that we parsed all attributes for
         # previous schema base or end of rows
         if (schema_base.name != row[0] and schema_base.name != nil) or (i+1 == rows_count)
-          objects = [schema_base]
-
-          objects << overlays.values
-
-          objects.flatten.each { |obj|
-            puts "Writing #{obj.class.name}"
-            if obj.class.name.split('::').last == "SchemaBase"
-              puts "SchemaBase: #{obj.name}"
-              puts "Create dir"
-              unless Dir.exist?("output/"+obj.name)
-                FileUtils.mkdir_p("output/"+obj.name)
-              end
-              File.open("output/#{obj.name}.json","w") do |f|
-                f.write(JSON.pretty_generate(obj))
-              end
-            else
-              puts "Processing #{obj.description}"
-              obj = Odca::ParentfulOverlay.new(
-                parent: schema_base,
-                overlay: obj
-              )
-
-              if obj.is_valid?
-                puts "Object is valid saving ..."
-                hl = 'hl:' + HashlinkGenerator.call(obj)
-                File.open("output/#{schema_base.name}/#{obj.overlay.class.name.split('::').last}-#{hl}.json","w") do |f|
-                  f.write(JSON.pretty_generate(obj))
-                end
-              else
-                puts "Object is invalid"
-              end
-            end
-          }
+          save(
+            schema_base: schema_base,
+            overlays: overlays.values
+          )
 
           # Reset base object, overlays and temporary attributes
           schema_base = SchemaBase.new
@@ -205,6 +177,47 @@ module Odca
         # END Overlays
 
 
+      end
+    end
+
+    def save(schema_base:, overlays:)
+      path = "#{output_dir}/#{schema_base.name}"
+
+      puts "Writing SchemaBase: #{schema_base.name}"
+      save_schema_base(schema_base, path: path)
+
+      overlays.each do |overlay|
+        next if overlay.empty?
+        puts "Processing #{overlay.description}"
+
+        puts 'Saving object...'
+        save_overlay(
+          Odca::ParentfulOverlay.new(
+            parent: schema_base, overlay: overlay
+          ),
+          path: path
+        )
+      end
+    end
+
+    def save_schema_base(schema_base, path:)
+      unless Dir.exist?(path)
+        puts 'Create dir'
+        FileUtils.mkdir_p(path)
+      end
+
+      File.open("#{path}.json", 'w') do |f|
+        f.write(JSON.pretty_generate(schema_base))
+      end
+    end
+
+    def save_overlay(parentful_overlay, path:)
+      overlay_class_name = parentful_overlay.overlay.class
+        .name.split('::').last
+      hl = 'hl:' + HashlinkGenerator.call(parentful_overlay)
+
+      File.open("#{path}/#{overlay_class_name}-#{hl}.json", 'w') do |f|
+        f.write(JSON.pretty_generate(parentful_overlay))
       end
     end
   end
