@@ -3,9 +3,10 @@ require 'odca/hashlink_generator'
 require 'json'
 
 RSpec.describe Odca::BigParser do
-  let(:topic)  { described_class.new(filename) }
+  let(:topic)  { described_class.new(filename, output_dir) }
 
   let(:filename) { File.join(SPEC_ROOT, 'shared/example.csv') }
+  let(:output_dir) { 'spec/shared/output' }
 
   describe '#call' do
     context 'when valid CSV file is provided' do
@@ -13,15 +14,19 @@ RSpec.describe Odca::BigParser do
         topic.call
       end
 
+      after(:each) do
+        %x(`rm -rf #{output_dir}`)
+      end
+
       let(:audit_overview_schema_base) do
         JSON.load(File.open(File.join(
-          LIB_ROOT, 'output', 'AuditOverview.json'
+          LIB_ROOT, output_dir, 'AuditOverview.json'
         )))
       end
 
       let(:facility_background_schema_base) do
         JSON.load(File.open(File.join(
-          LIB_ROOT, 'output', 'FacilityBackground.json'
+          LIB_ROOT, output_dir, 'FacilityBackground.json'
         )))
       end
 
@@ -38,7 +43,7 @@ RSpec.describe Odca::BigParser do
       context 'when Label Overlay is provided' do
         let(:label_overlays) do
           Dir[File.join(
-            LIB_ROOT, 'output', schema_base_dir, 'LabelOverlay*.json'
+            LIB_ROOT, output_dir, schema_base_dir, 'LabelOverlay*.json'
           )].map do |path|
             JSON.load(File.open(path))
           end
@@ -85,7 +90,7 @@ RSpec.describe Odca::BigParser do
       context 'when Format Overlay is provided' do
         let(:format_overlays) do
           Dir[File.join(
-            LIB_ROOT, 'output', schema_base_dir, 'FormatOverlay*.json'
+            LIB_ROOT, output_dir, schema_base_dir, 'FormatOverlay*.json'
           )].map do |path|
             JSON.load(File.open(path))
           end
@@ -126,7 +131,7 @@ RSpec.describe Odca::BigParser do
       context 'when Encode Overlay is provided' do
         let(:encode_overlays) do
           Dir[File.join(
-            LIB_ROOT, 'output', schema_base_dir, 'EncodeOverlay*.json'
+            LIB_ROOT, output_dir, schema_base_dir, 'EncodeOverlay*.json'
           )].map do |path|
             JSON.load(File.open(path))
           end
@@ -167,7 +172,7 @@ RSpec.describe Odca::BigParser do
       context 'when Entry Overlay is provided' do
         let(:entry_overlays) do
           Dir[File.join(
-            LIB_ROOT, 'output', schema_base_dir, 'EntryOverlay*.json'
+            LIB_ROOT, output_dir, schema_base_dir, 'EntryOverlay*.json'
           )].map do |path|
             JSON.load(File.open(path))
           end
@@ -219,7 +224,7 @@ RSpec.describe Odca::BigParser do
       context 'when Inforation Overlay is provided' do
         let(:information_overlays) do
           Dir[File.join(
-            LIB_ROOT, 'output', schema_base_dir, 'InformationOverlay*.json'
+            LIB_ROOT, output_dir, schema_base_dir, 'InformationOverlay*.json'
           )].map do |path|
             JSON.load(File.open(path))
           end
@@ -276,7 +281,7 @@ RSpec.describe Odca::BigParser do
       context 'when Source Overlay is provided' do
         let(:source_overlays) do
           Dir[File.join(
-            LIB_ROOT, 'output', schema_base_dir, 'SourceOverlay*.json'
+            LIB_ROOT, output_dir, schema_base_dir, 'SourceOverlay*.json'
           )].map do |path|
             JSON.load(File.open(path))
           end
@@ -321,7 +326,7 @@ RSpec.describe Odca::BigParser do
       context 'when Review Overlay is provided' do
         let(:review_overlays) do
           Dir[File.join(
-            LIB_ROOT, 'output', schema_base_dir, 'ReviewOverlay*.json'
+            LIB_ROOT, output_dir, schema_base_dir, 'ReviewOverlay*.json'
           )].map do |path|
             JSON.load(File.open(path))
           end

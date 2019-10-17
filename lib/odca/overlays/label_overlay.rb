@@ -10,17 +10,13 @@ module Odca
 
       def_delegators :header,
         :issued_by, :type,
-        :schema_base_id, :schema_base_id=,
-        :role, :role=, :purpose, :purpose=,
-        :description, :description=, :name, :name=
+        :role, :purpose,
+        :description, :description=
 
-      def initialize(schema_base_id = '', issued_by = '')
+      def initialize(header)
         @label_attributes = []
-        @header = Header.new(
-          schema_base_id: schema_base_id,
-          type: 'spec/overlay/label/1.0',
-          issued_by: issued_by
-        )
+        header.type = 'spec/overlay/label/1.0'
+        @header = header
       end
 
       def to_json(options = {})
@@ -37,10 +33,8 @@ module Odca
         )
       end
 
-      # @deprecated
-      def is_valid?
-        # no way to be invalid with implementation assured by tests
-        true
+      def empty?
+        label_attributes.empty?
       end
 
       def add_label_attribute(label_attribute)

@@ -7,4 +7,5 @@ raise RuntimeError.new, 'Please provide input file as an argument' unless filena
 
 require 'odca/big_parser'
 
-Odca::BigParser.new(filename).call
+OUTPUT_DIR = 'output'.freeze
+Odca::BigParser.new(filename, OUTPUT_DIR).call

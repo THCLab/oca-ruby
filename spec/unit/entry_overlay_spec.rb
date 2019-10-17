@@ -1,14 +1,18 @@
 require 'odca/overlays/entry_overlay'
 
 RSpec.describe Odca::Overlays::EntryOverlay do
-  let(:overlay) { described_class.new }
+  let(:overlay) do
+    described_class.new(
+      Odca::Overlays::Header.new(
+        role: 'role', purpose: 'purpose'
+      )
+    )
+  end
 
   describe '#to_h' do
     context 'entry overlay has entry attributes' do
       before(:each) do
         overlay.description = 'desc'
-        overlay.role = 'role'
-        overlay.purpose = 'purpose'
         overlay.language = 'en'
 
         overlay.add_entry_attribute(
@@ -30,7 +34,6 @@ RSpec.describe Odca::Overlays::EntryOverlay do
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
           '@context' => 'https://odca.tech/overlays/v1',
-          schema_base: '',
           type: 'spec/overlay/entry/1.0',
           description: 'desc',
           issued_by: '',
