@@ -33,7 +33,7 @@ module Odca
       columns_number = records[0].size
 
       puts 'Reading overlays ...'
-      columns_number.times do |i|
+      (6..columns_number - 1).each do |i|
         overlay_name = records[2][i]
         begin
           overlay_clazz = Odca::Overlays.const_get(
@@ -49,7 +49,7 @@ module Odca
           overlays[i] = overlay
           puts "Overlay loaded: #{overlay_clazz}"
         rescue => e
-          puts "Warrning: problem reading #{overlay_name}, probably not overlay: #{e}"
+          raise "Not found Overlay Class for '#{overlay_name}': #{e}"
         end
       end
 
