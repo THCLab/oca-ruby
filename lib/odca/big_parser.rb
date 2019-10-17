@@ -15,19 +15,6 @@ module Odca
 
     def call
       schema_base = SchemaBase.new
-
-      attrs = {}
-      pii = []
-      labels = {}
-      categories = []
-      category_labels = {}
-      encoding = {}
-      entries = {}
-      information = {}
-      hidden_attributes = {}
-      required_attributes = {}
-      sources = {}
-      review = {}
       overlays = {}
 
       columns_number = records[0].size
@@ -107,20 +94,6 @@ module Odca
             new_overlay.language = overlay.language if defined? overlay.language
             overlays[index] = new_overlay
           }
-
-          attrs = {}
-          pii = []
-          labels = {}
-          categories = []
-          category_labels = {}
-          encoding = {}
-          entries = {}
-          information = {}
-          hidden_attributes = {}
-          required_attributes = {}
-          sources = {}
-          review = {}
-
         end
 
         # START Schema base object
