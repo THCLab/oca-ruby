@@ -41,7 +41,6 @@ RSpec.describe Odca::Overlays::LabelOverlay do
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
           '@context' => 'https://odca.tech/overlays/v1',
-          schema_base: '',
           type: 'spec/overlay/label/1.0',
           description: 'desc',
           issued_by: '',

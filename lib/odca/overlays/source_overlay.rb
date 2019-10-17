@@ -9,7 +9,6 @@ module Odca
 
       def_delegators :header,
         :issued_by, :type,
-        :schema_base_id, :schema_base_id=,
         :role, :purpose,
         :description, :description=
 

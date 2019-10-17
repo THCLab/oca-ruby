@@ -65,8 +65,6 @@ module Odca
 
           objects << overlays.values
 
-          # Calculate hl for schema_base
-          base_hl = 'hl:' + HashlinkGenerator.call(schema_base)
           objects.flatten.each { |obj|
             puts "Writing #{obj.class.name}"
             if obj.class.name.split('::').last == "SchemaBase"
@@ -80,11 +78,15 @@ module Odca
               end
             else
               puts "Processing #{obj.description}"
-              obj.schema_base_id = base_hl
+              obj = Odca::ParentfulOverlay.new(
+                parent: schema_base,
+                overlay: obj
+              )
+
               if obj.is_valid?
                 puts "Object is valid saving ..."
                 hl = 'hl:' + HashlinkGenerator.call(obj)
-                File.open("output/#{schema_base.name}/#{obj.class.name.split('::').last}-#{hl}.json","w") do |f|
+                File.open("output/#{schema_base.name}/#{obj.overlay.class.name.split('::').last}-#{hl}.json","w") do |f|
                   f.write(JSON.pretty_generate(obj))
                 end
               else

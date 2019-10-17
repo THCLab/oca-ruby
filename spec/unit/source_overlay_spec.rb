@@ -33,7 +33,6 @@ RSpec.describe Odca::Overlays::SourceOverlay do
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
           '@context' => 'https://odca.tech/overlays/v1',
-          schema_base: '',
           type: 'spec/overlay/source/1.0',
           description: 'desc',
           issued_by: '',
