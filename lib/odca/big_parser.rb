@@ -7,39 +7,31 @@ require 'pp'
 
 module Odca
   class BigParser
-    attr_reader :records, :output_dir
+    attr_reader :records, :output_dir, :overlay_dtos
 
     def initialize(filename, output_dir)
+      @overlay_dtos = []
       @records = CSV.read(filename, col_sep: ';')
       @output_dir = output_dir
     end
 
     def call
       schema_base = SchemaBase.new
-      overlays = {}
 
       columns_number = records[0].size
 
       puts 'Reading overlays ...'
       (6..columns_number - 1).each do |i|
-        overlay_name = records[2][i]
-        begin
-          overlay_clazz = Odca::Overlays.const_get(
-            overlay_name.delete(' ')
-          )
-          overlay = overlay_clazz.new(
-            Odca::Overlays::Header.new(
-              role: records[0][i],
-              purpose: records[1][i]
-            )
-          )
-          overlay.language = records[3][i] if defined? overlay.language
-          overlays[i] = overlay
-          puts "Overlay loaded: #{overlay_clazz}"
-        rescue => e
-          raise "Not found Overlay Class for '#{overlay_name}': #{e}"
-        end
+        overlay_dtos << Overlay.new(
+          index: i,
+          name: records[2][i],
+          role: records[0][i],
+          purpose: records[1][i],
+          language: records[3][i]
+        )
       end
+
+      overlays = reset_overlays
 
       # Drop header before start filling the object
       records.slice!(0, 4)
@@ -54,18 +46,8 @@ module Odca
             overlays: overlays.values
           )
 
-          # Reset base object, overlays and temporary attributes
           schema_base = SchemaBase.new
-          overlays.each { |index, overlay|
-            new_overlay = overlay.class.new(
-              Odca::Overlays::Header.new(
-                role: overlay.role,
-                purpose: overlay.purpose
-              )
-            )
-            new_overlay.language = overlay.language if defined? overlay.language
-            overlays[index] = new_overlay
-          }
+          overlays = reset_overlays
         end
 
         # START Schema base object
@@ -218,6 +200,42 @@ module Odca
 
       File.open("#{path}/#{overlay_class_name}-#{hl}.json", 'w') do |f|
         f.write(JSON.pretty_generate(parentful_overlay))
+      end
+    end
+
+    def reset_overlays
+      overlays = {}
+
+      overlay_dtos.each do |overlay_dto|
+        begin
+          overlay_class = Odca::Overlays.const_get(
+            overlay_dto.name.delete(' ')
+          )
+          overlay = overlay_class.new(
+            Odca::Overlays::Header.new(
+              role: overlay_dto.role,
+              purpose: overlay_dto.purpose
+            )
+          )
+          overlay.language = overlay_dto.language if defined? overlay.language
+          overlays[overlay_dto.index] = overlay
+        rescue => e
+          raise "Not found Overlay Class for '#{overlay_dto.name}': #{e}"
+        end
+      end
+
+      overlays
+    end
+
+    class Overlay
+      attr_reader :index, :name, :role, :purpose, :language
+
+      def initialize(index:, name:, role:, purpose:, language:)
+        @index = index
+        @name = name
+        @role = role
+        @purpose = purpose
+        @language = language
       end
     end
   end
