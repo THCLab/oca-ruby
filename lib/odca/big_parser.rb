@@ -136,9 +136,12 @@ module Odca
         overlays.each { |index,overlay|
           case overlay.class.name.split('::').last
           when "FormatOverlay"
-            overlay.add_format(
-              Odca::Overlays::FormatOverlay::Format.new(
-                attr_name, row[index]
+            overlay.add_format_attribute(
+              Odca::Overlays::FormatOverlay::FormatAttribute.new(
+                Odca::Overlays::FormatOverlay::InputValidator.new(
+                  attr_name: attr_name,
+                  value: row[index]
+                ).call
               )
             )
             overlay.description = "Attribute formats for #{schema_base.name}"
@@ -155,42 +158,65 @@ module Odca
             end
             overlay.description = "Category and attribute labels for #{schema_base.name}"
           when "EncodeOverlay"
-            encoding[index] = {} if encoding[index] == nil
-            unless row[index].to_s.strip.empty?
-              encoding[index][attr_name] = row[index]
+            if row[index]
+              overlay.add_encoding_attribute(
+                Odca::Overlays::EncodeOverlay::EncodingAttribute.new(
+                  Odca::Overlays::EncodeOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Character set encoding for #{schema_base.name}"
-            overlay.attr_encoding = encoding[index]
           when "EntryOverlay"
-            entries[index] = {} if entries[index] == nil
-            unless row[index].to_s.strip.empty?
-              value = row[index].to_s.strip
-              values = value.split("|")
-              entries[index][attr_name] = values
+            if row[index]
+              overlay.add_entry_attribute(
+                Odca::Overlays::EntryOverlay::EntryAttribute.new(
+                  Odca::Overlays::EntryOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Field entries for #{schema_base.name}"
-            overlay.attr_entries = entries[index]
           when "InformationOverlay"
-            information[index] = {} if information[index] == nil
-            unless row[index].to_s.strip.empty?
-              information[index][attr_name] = row[index]
+            if row[index]
+              overlay.add_information_attribute(
+                Odca::Overlays::InformationOverlay::InformationAttribute.new(
+                  Odca::Overlays::InformationOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Informational items for #{schema_base.name}"
-            overlay.attr_information = information[index]
           when "SourceOverlay"
-            sources[index] = {} if sources[index] == nil
-            unless row[index].to_s.strip.empty?
-              sources[index][attr_name] = ""
+            if row[index]
+              overlay.add_source_attribute(
+                Odca::Overlays::SourceOverlay::SourceAttribute.new(
+                  Odca::Overlays::SourceOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Source endpoints for #{schema_base.name}"
-            overlay.attr_sources = sources[index]
           when "ReviewOverlay"
-            review[index] = {} if review[index] == nil
-            unless row[index].to_s.strip.empty?
-              review[index][attr_name] = ""
+            if row[index]
+              overlay.add_review_attribute(
+                Odca::Overlays::ReviewOverlay::ReviewAttribute.new(
+                  Odca::Overlays::ReviewOverlay::InputValidator.new(
+                    attr_name: attr_name,
+                    value: row[index]
+                  ).call
+                )
+              )
             end
             overlay.description = "Field entry review comments for #{schema_base.name}"
-            overlay.attr_comments = review[index]
           else
             puts "Error uknown overlay: #{overlay}"
           end
