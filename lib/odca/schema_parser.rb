@@ -81,8 +81,8 @@ module Odca
         )
         overlay.description = "Category and attribute labels for #{schema_base_name}"
       when 'EncodeOverlay'
-        overlay.add_encoding_attribute(
-          Odca::Overlays::EncodeOverlay::EncodingAttribute.new(
+        overlay.add_encode_attribute(
+          Odca::Overlays::EncodeOverlay::EncodeAttribute.new(
             Odca::Overlays::EncodeOverlay::InputValidator.new(
               attr_name: attr_name,
               value: value

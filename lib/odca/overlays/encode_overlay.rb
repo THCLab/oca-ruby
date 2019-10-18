@@ -6,7 +6,7 @@ module Odca
     class EncodeOverlay
       extend Forwardable
       attr_accessor :language
-      attr_reader :encoding_attributes, :header
+      attr_reader :encode_attributes, :header
 
       DEFAULT_ENCODING = 'utf-8'.freeze
 
@@ -16,7 +16,7 @@ module Odca
         :description, :description=
 
       def initialize(header)
-        @encoding_attributes = []
+        @encode_attributes = []
         header.type = 'spec/overlay/encode/1.0'
         @header = header
       end
@@ -40,21 +40,21 @@ module Odca
       end
 
       def empty?
-        encoding_attributes.empty?
+        encode_attributes.empty?
       end
 
-      def add_encoding_attribute(encoding_attribute)
-        return if encoding_attribute.nil? || encoding_attribute.encoding.empty?
-        encoding_attributes << encoding_attribute
+      def add_encode_attribute(encode_attribute)
+        return if encode_attribute.nil? || encode_attribute.encoding.empty?
+        encode_attributes << encode_attribute
       end
 
       private def attr_encoding
-        encoding_attributes.each_with_object({}) do |attr, memo|
+        encode_attributes.each_with_object({}) do |attr, memo|
           memo[attr.attr_name] = attr.encoding
         end
       end
 
-      class EncodingAttribute
+      class EncodeAttribute
         attr_reader :attr_name, :encoding
 
         def initialize(attr_name:, encoding:)
