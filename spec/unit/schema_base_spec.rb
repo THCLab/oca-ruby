@@ -1,15 +1,19 @@
 require 'odca/schema_base'
 
 RSpec.describe Odca::SchemaBase do
-  let(:schema_base) { described_class.new }
+  let(:schema_base) do
+    described_class.new(
+      described_class::Header.new(
+        name: 'sb_name',
+        description: 'sb_desc',
+        classification: 'sb_class'
+      )
+    )
+  end
 
   describe '#to_h' do
     context 'schema base has attributes' do
       before(:each) do
-        schema_base.name = 'sb_name'
-        schema_base.description = 'sb_desc'
-        schema_base.classification = 'sb_class'
-
         schema_base.add_attribute(
           described_class::Attribute.new(
             name: 'attr_name', type: 'attr_type', pii: 'Y'

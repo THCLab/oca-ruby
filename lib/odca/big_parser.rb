@@ -1,7 +1,7 @@
-require 'csv'
 require 'fileutils'
 require 'odca/odca.rb'
 require 'odca/hashlink_generator'
+require 'odca/schema_parser'
 require 'json'
 require 'pp'
 
@@ -9,20 +9,18 @@ module Odca
   class BigParser
     attr_reader :records, :output_dir, :overlay_dtos
 
-    def initialize(filename, output_dir)
+    def initialize(records, output_dir)
       @overlay_dtos = []
-      @records = CSV.read(filename, col_sep: ';')
+      @records = records
       @output_dir = output_dir
     end
 
     def call
-      schema_base = SchemaBase.new
-
       columns_number = records[0].size
 
       puts 'Reading overlays ...'
       (6..columns_number - 1).each do |i|
-        overlay_dtos << Overlay.new(
+        overlay_dtos << OverlayDto.new(
           index: i,
           name: records[2][i],
           role: records[0][i],
@@ -30,54 +28,29 @@ module Odca
           language: records[3][i]
         )
       end
-
-      overlays = reset_overlays
-
-      # Drop header before start filling the object
       records.slice!(0, 4)
-      puts "Overlays loaded, start creating objects"
-      rows_count = records.size
-      records.each_with_index do |row, i|
-        # Save it only if schema base change which means that we parsed all attributes for
-        # previous schema base or end of rows
-        if (schema_base.name != row[0] and schema_base.name != nil) or (i+1 == rows_count)
-          save(
-            schema_base: schema_base,
-            overlays: overlays.values
-          )
 
-          schema_base = SchemaBase.new
-          overlays = reset_overlays
-        end
+      puts 'Overlays loaded, start creating objects'
+      schemas = separate_schemas(records)
 
-        # START Schema base object
-        schema_base.name = row[0]
-        schema_base.description = row[1]
-        schema_base.classification = row[2]
+      schemas.each do |schema|
+        schema_base, overlays = schema.call
+        save(schema_base: schema_base, overlays: overlays)
+      end
+    end
 
-        attr_name = row[3]
-        attr_type = row[4]
-
-        schema_base.add_attribute(
-          SchemaBase::Attribute.new(
-            name: attr_name,
-            type: attr_type,
-            pii: row[5]
-          )
+    private def separate_schemas(records)
+      schema_name = ''
+      schema_first_row = 0
+      records.each_with_object([]).with_index do |(row, memo), i|
+        schema_name = row[0] if i.zero?
+        next_record = records[i + 1]
+        next if next_record && schema_name == next_record[0]
+        memo << Odca::SchemaParser.new(
+          records[schema_first_row..i], overlay_dtos
         )
-        # END Schema base object
-
-        # START Overlays
-        overlays.each do |index, overlay|
-          next unless row[index]
-          add_attribute(
-            to: overlay,
-            schema_base_name: schema_base.name,
-            attr_name: attr_name,
-            value: row[index]
-          )
-        end
-        # END Overlays
+        schema_name = next_record[0] if next_record
+        schema_first_row = i + 1
       end
     end
 
@@ -122,110 +95,7 @@ module Odca
       end
     end
 
-    def reset_overlays
-      overlays = {}
-
-      overlay_dtos.each do |overlay_dto|
-        begin
-          overlay_class = Odca::Overlays.const_get(
-            overlay_dto.name.delete(' ')
-          )
-          overlay = overlay_class.new(
-            Odca::Overlays::Header.new(
-              role: overlay_dto.role,
-              purpose: overlay_dto.purpose
-            )
-          )
-          overlay.language = overlay_dto.language if defined? overlay.language
-          overlays[overlay_dto.index] = overlay
-        rescue => e
-          raise "Not found Overlay Class for '#{overlay_dto.name}': #{e}"
-        end
-      end
-
-      overlays
-    end
-
-    def add_attribute(to:, schema_base_name:, attr_name:, value:)
-      overlay = to
-      case overlay.class.name.split('::').last
-      when 'FormatOverlay'
-        overlay.add_format_attribute(
-          Odca::Overlays::FormatOverlay::FormatAttribute.new(
-            Odca::Overlays::FormatOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
-        overlay.description = "Attribute formats for #{schema_base_name}"
-      when 'LabelOverlay'
-        overlay.add_label_attribute(
-          Odca::Overlays::LabelOverlay::LabelAttribute.new(
-            Odca::Overlays::LabelOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
-        overlay.description = "Category and attribute labels for #{schema_base_name}"
-      when 'EncodeOverlay'
-        overlay.add_encoding_attribute(
-          Odca::Overlays::EncodeOverlay::EncodingAttribute.new(
-            Odca::Overlays::EncodeOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
-        overlay.description = "Character set encoding for #{schema_base_name}"
-      when 'EntryOverlay'
-        overlay.add_entry_attribute(
-          Odca::Overlays::EntryOverlay::EntryAttribute.new(
-            Odca::Overlays::EntryOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
-        overlay.description = "Field entries for #{schema_base_name}"
-      when 'InformationOverlay'
-        overlay.add_information_attribute(
-          Odca::Overlays::InformationOverlay::InformationAttribute.new(
-            Odca::Overlays::InformationOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
-        overlay.description = "Informational items for #{schema_base_name}"
-      when 'SourceOverlay'
-        overlay.add_source_attribute(
-          Odca::Overlays::SourceOverlay::SourceAttribute.new(
-            Odca::Overlays::SourceOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
-        overlay.description = "Source endpoints for #{schema_base_name}"
-      when 'ReviewOverlay'
-        overlay.add_review_attribute(
-          Odca::Overlays::ReviewOverlay::ReviewAttribute.new(
-            Odca::Overlays::ReviewOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
-        overlay.description = "Field entry review comments for #{schema_base_name}"
-      else
-        puts "Error uknown overlay: #{overlay}"
-      end
-    end
-
-
-    class Overlay
+    class OverlayDto
       attr_reader :index, :name, :role, :purpose, :language
 
       def initialize(index:, name:, role:, purpose:, language:)

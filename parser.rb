@@ -5,7 +5,9 @@ Bundler.require
 filename = ARGV[0]
 raise RuntimeError.new, 'Please provide input file as an argument' unless filename
 
+require 'csv'
 require 'odca/big_parser'
 
 OUTPUT_DIR = 'output'.freeze
-Odca::BigParser.new(filename, OUTPUT_DIR).call
+records = CSV.read(filename, col_sep: ';')
+Odca::BigParser.new(records, OUTPUT_DIR).call

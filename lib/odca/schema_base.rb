@@ -3,14 +3,11 @@ module Odca
     extend Forwardable
     attr_reader :attributes, :header
 
-    def_delegators :header,
-                   :name, :name=,
-                   :description, :description=,
-                   :classification, :classification=
+    def_delegators :header, :name, :description, :classification
 
-    def initialize
+    def initialize(header)
       @attributes = []
-      @header = Header.new
+      @header = header
     end
 
     def to_h
@@ -35,7 +32,13 @@ module Odca
     end
 
     class Header
-      attr_accessor :name, :description, :classification
+      attr_reader :name, :description, :classification
+
+      def initialize(name:, description:, classification:)
+        @name = name
+        @description = description
+        @classification = classification
+      end
 
       def to_h
         {
