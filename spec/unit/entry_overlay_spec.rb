@@ -12,7 +12,6 @@ RSpec.describe Odca::Overlays::EntryOverlay do
   describe '#to_h' do
     context 'entry overlay has entry attributes' do
       before(:each) do
-        overlay.description = 'desc'
         overlay.language = 'en'
 
         overlay.add_attribute(
@@ -35,7 +34,7 @@ RSpec.describe Odca::Overlays::EntryOverlay do
         expect(overlay.to_h).to eql(
           '@context' => 'https://odca.tech/overlays/v1',
           type: 'spec/overlay/entry/1.0',
-          description: 'desc',
+          description: 'Field entries for ',
           issued_by: '',
           role: 'role',
           purpose: 'purpose',

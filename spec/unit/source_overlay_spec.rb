@@ -12,8 +12,6 @@ RSpec.describe Odca::Overlays::SourceOverlay do
   describe '#to_h' do
     context 'source overlay has source attributes' do
       before(:each) do
-        overlay.description = 'desc'
-
         overlay.add_attribute(
           described_class::SourceAttribute.new(
             described_class::InputValidator.new(
@@ -34,7 +32,7 @@ RSpec.describe Odca::Overlays::SourceOverlay do
         expect(overlay.to_h).to eql(
           '@context' => 'https://odca.tech/overlays/v1',
           type: 'spec/overlay/source/1.0',
-          description: 'desc',
+          description: 'Source endpoints for ',
           issued_by: '',
           role: 'role',
           purpose: 'purpose',

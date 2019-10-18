@@ -9,13 +9,12 @@ module Odca
       attr_reader :information_attributes, :header
 
       def_delegators :header,
-        :issued_by, :type,
-        :role, :purpose,
-        :description, :description=
+        :issued_by, :type, :role, :purpose, :description
 
       def initialize(header)
         @information_attributes = []
         header.type = 'spec/overlay/information/1.0'
+        header.description = 'Informational items for '
         @header = header
       end
 

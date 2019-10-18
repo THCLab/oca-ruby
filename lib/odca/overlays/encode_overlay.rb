@@ -11,13 +11,12 @@ module Odca
       DEFAULT_ENCODING = 'utf-8'.freeze
 
       def_delegators :header,
-        :issued_by, :type,
-        :role, :purpose,
-        :description, :description=
+        :issued_by, :type, :role, :purpose, :description
 
       def initialize(header)
         @encode_attributes = []
         header.type = 'spec/overlay/encode/1.0'
+        header.description = 'Character set encoding for '
         @header = header
       end
 

@@ -9,6 +9,7 @@ module Odca
 
     def initialize(parent:, overlay:)
       @parent = parent
+      overlay.description << parent.name
       @overlay = overlay
     end
 

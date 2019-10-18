@@ -12,8 +12,6 @@ RSpec.describe Odca::Overlays::FormatOverlay do
   describe '#to_h' do
     context 'format overlay has format attributes' do
       before(:each) do
-        overlay.description = 'desc'
-
         overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
@@ -41,7 +39,7 @@ RSpec.describe Odca::Overlays::FormatOverlay do
         expect(overlay.to_h).to eql(
           '@context' => 'https://odca.tech/overlays/v1',
           type: 'spec/overlay/format/1.0',
-          description: 'desc',
+          description: 'Attribute formats for ',
           issued_by: '',
           role: 'role',
           purpose: 'purpose',

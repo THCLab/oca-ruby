@@ -9,13 +9,12 @@ module Odca
       attr_reader :entry_attributes, :header
 
       def_delegators :header,
-        :issued_by, :type,
-        :role, :purpose,
-        :description, :description=
+        :issued_by, :type, :role, :purpose, :description
 
       def initialize(header)
         @entry_attributes = []
         header.type = 'spec/overlay/entry/1.0'
+        header.description = 'Field entries for '
         @header = header
       end
 

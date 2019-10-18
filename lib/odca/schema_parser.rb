@@ -46,7 +46,6 @@ module Odca
         attrs.each do |attr|
           add_attribute(
             to: overlay,
-            schema_base_name: schema_base.name,
             attr_name: attr[:name],
             value: attr[:value]
           )
@@ -57,13 +56,17 @@ module Odca
       [schema_base, overlays]
     end
 
-    def add_attribute(to:, schema_base_name:, attr_name:, value:)
+    def add_attribute(to:, attr_name:, value:)
       overlay = to
       overlay_name = overlay.class.name.split('::').last
-      attribute_class = overlay.class
-        .const_get(overlay_name.gsub('Overlay', 'Attribute'))
-      validator_class = overlay.class
-        .const_get('InputValidator')
+      begin
+        attribute_class = overlay.class
+          .const_get(overlay_name.gsub('Overlay', 'Attribute'))
+        validator_class = overlay.class
+          .const_get('InputValidator')
+      rescue => e
+        raise "Not found Attribute Class for '#{overlay_name}': #{e}"
+      end
 
       overlay.add_attribute(
         attribute_class.new(
@@ -73,27 +76,6 @@ module Odca
           ).call
         )
       )
-
-      case overlay_name
-      when 'FormatOverlay'
-        overlay.description = "Attribute formats for #{schema_base_name}"
-      when 'LabelOverlay'
-        overlay.description = "Category and attribute labels for #{schema_base_name}"
-      when 'EncodeOverlay'
-        overlay.description = "Character set encoding for #{schema_base_name}"
-      when 'EntryOverlay'
-        overlay.description = "Field entries for #{schema_base_name}"
-      when 'InformationOverlay'
-        overlay.description = "Informational items for #{schema_base_name}"
-      when 'SourceOverlay'
-        overlay.description = "Source endpoints for #{schema_base_name}"
-      when 'ReviewOverlay'
-        overlay.description = "Field entry review comments for #{schema_base_name}"
-      when 'MaskingOverlay'
-        overlay.description = "Masking attributes for #{schema_base_name}"
-      else
-        puts "Error uknown overlay: #{overlay}"
-      end
     end
 
     private def create_overlay(overlay_dto)

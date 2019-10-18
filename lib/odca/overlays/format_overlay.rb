@@ -8,13 +8,12 @@ module Odca
       attr_reader :format_attributes, :header
 
       def_delegators :header,
-        :issued_by, :type,
-        :role, :purpose,
-        :description, :description=
+        :issued_by, :type, :role, :purpose, :description
 
       def initialize(header)
         @format_attributes = []
         header.type = 'spec/overlay/format/1.0'
+        header.description = 'Attribute formats for '
         @header = header
       end
 

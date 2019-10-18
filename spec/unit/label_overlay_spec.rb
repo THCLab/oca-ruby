@@ -12,7 +12,6 @@ RSpec.describe Odca::Overlays::LabelOverlay do
   describe '#to_h' do
     context 'label overlay has label attributes' do
       before(:each) do
-        overlay.description = 'desc'
         overlay.language = 'en'
 
         overlay.add_attribute(
@@ -42,7 +41,7 @@ RSpec.describe Odca::Overlays::LabelOverlay do
         expect(overlay.to_h).to eql(
           '@context' => 'https://odca.tech/overlays/v1',
           type: 'spec/overlay/label/1.0',
-          description: 'desc',
+          description: 'Category and attribute labels for ',
           issued_by: '',
           role: 'role',
           purpose: 'purpose',

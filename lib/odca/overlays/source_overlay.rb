@@ -8,13 +8,12 @@ module Odca
       attr_reader :source_attributes, :header
 
       def_delegators :header,
-        :issued_by, :type,
-        :role, :purpose,
-        :description, :description=
+        :issued_by, :type, :role, :purpose, :description
 
       def initialize(header)
         @source_attributes = []
         header.type = 'spec/overlay/source/1.0'
+        header.description = 'Source endpoints for '
         @header = header
       end
 

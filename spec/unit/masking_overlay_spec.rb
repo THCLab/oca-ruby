@@ -12,8 +12,6 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
   describe '#to_h' do
     context 'masking overlay has masking attributes' do
       before(:each) do
-        overlay.description = 'desc'
-
         overlay.add_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
@@ -34,7 +32,7 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
         expect(overlay.to_h).to eql(
           '@context' => 'https://odca.tech/overlays/v1',
           type: 'spec/overlay/masking/1.0',
-          description: 'desc',
+          description: 'Masking attributes for ',
           issued_by: '',
           role: 'role',
           purpose: 'purpose',

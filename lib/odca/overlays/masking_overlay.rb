@@ -8,13 +8,12 @@ module Odca
       attr_reader :mask_attributes, :header
 
       def_delegators :header,
-        :issued_by, :type,
-        :role, :purpose,
-        :description, :description=
+        :issued_by, :type, :role, :purpose, :description
 
       def initialize(header)
         @mask_attributes = []
         header.type = 'spec/overlay/masking/1.0'
+        header.description = 'Masking attributes for '
         @header = header
       end
 
