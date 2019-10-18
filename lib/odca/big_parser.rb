@@ -31,27 +31,26 @@ module Odca
       records.slice!(0, 4)
 
       puts 'Overlays loaded, start creating objects'
-      rows_count = records.size
-      schemas = []
-      schema_name = ''
-      schema_first_row = 0
-      records.each_with_index do |row, i|
-        if i.zero?
-          schema_name = row[0]
-          schema_first_row = i
-        end
-        next unless i + 1 == rows_count || schema_name != row[0]
-
-        schemas << Odca::SchemaParser.new(
-          records[schema_first_row..i - 1], overlay_dtos
-        )
-        schema_name = row[0]
-        schema_first_row = i
-      end
+      schemas = separate_schemas(records)
 
       schemas.each do |schema|
         schema_base, overlays = schema.call
         save(schema_base: schema_base, overlays: overlays)
+      end
+    end
+
+    private def separate_schemas(records)
+      schema_name = ''
+      schema_first_row = 0
+      records.each_with_object([]).with_index do |(row, memo), i|
+        schema_name = row[0] if i.zero?
+        next_record = records[i + 1]
+        next if next_record && schema_name == next_record[0]
+        memo << Odca::SchemaParser.new(
+          records[schema_first_row..i], overlay_dtos
+        )
+        schema_name = next_record[0] if next_record
+        schema_first_row = i + 1
       end
     end
 
