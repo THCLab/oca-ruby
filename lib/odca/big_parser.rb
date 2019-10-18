@@ -1,4 +1,3 @@
-require 'csv'
 require 'fileutils'
 require 'odca/odca.rb'
 require 'odca/hashlink_generator'
@@ -10,9 +9,9 @@ module Odca
   class BigParser
     attr_reader :records, :output_dir, :overlay_dtos
 
-    def initialize(filename, output_dir)
+    def initialize(records, output_dir)
       @overlay_dtos = []
-      @records = CSV.read(filename, col_sep: ';')
+      @records = records
       @output_dir = output_dir
     end
 

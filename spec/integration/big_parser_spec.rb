@@ -1,11 +1,13 @@
 require 'odca/big_parser'
 require 'odca/hashlink_generator'
+require 'csv'
 require 'json'
 
 RSpec.describe Odca::BigParser do
-  let(:topic)  { described_class.new(filename, output_dir) }
+  let(:topic)  { described_class.new(records, output_dir) }
 
   let(:filename) { File.join(SPEC_ROOT, 'shared/example.csv') }
+  let(:records) { CSV.read(filename, col_sep: ';') }
   let(:output_dir) { 'spec/shared/output' }
 
   describe '#call' do
