@@ -37,7 +37,7 @@ module Odca
         label_attributes.empty?
       end
 
-      def add_label_attribute(label_attribute)
+      def add_attribute(label_attribute)
         return if label_attribute.nil? || label_attribute.name.strip.empty?
         label_attributes << label_attribute
       end

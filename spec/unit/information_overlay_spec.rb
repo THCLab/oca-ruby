@@ -15,14 +15,14 @@ RSpec.describe Odca::Overlays::InformationOverlay do
         overlay.description = 'desc'
         overlay.language = 'en'
 
-        overlay.add_information_attribute(
+        overlay.add_attribute(
           described_class::InformationAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'info'
             ).call
           )
         )
-        overlay.add_information_attribute(
+        overlay.add_attribute(
           described_class::InformationAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'some info'
@@ -49,9 +49,9 @@ RSpec.describe Odca::Overlays::InformationOverlay do
     end
   end
 
-  describe '#add_information_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_information_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when information_attribute is provided correctly' do
@@ -81,14 +81,14 @@ RSpec.describe Odca::Overlays::InformationOverlay do
   describe '#attr_information' do
     context 'when information_attributes are added' do
       before(:each) do
-        overlay.add_information_attribute(
+        overlay.add_attribute(
           described_class::InformationAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'info'
             ).call
           )
         )
-        overlay.add_information_attribute(
+        overlay.add_attribute(
           described_class::InformationAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'some info'

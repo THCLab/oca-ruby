@@ -15,14 +15,14 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
         overlay.description = 'desc'
         overlay.language = 'en'
 
-        overlay.add_encode_attribute(
+        overlay.add_attribute(
           described_class::EncodeAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'utf-8'
             ).call
           )
         )
-        overlay.add_encode_attribute(
+        overlay.add_attribute(
           described_class::EncodeAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'utf-8'
@@ -49,9 +49,9 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
     end
   end
 
-  describe '#add_encode_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_encode_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when encode_attribute is provided correctly' do
@@ -81,14 +81,14 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
   describe '#attr_encoding' do
     context 'when encode_attributes are added' do
       before(:each) do
-        overlay.add_encode_attribute(
+        overlay.add_attribute(
           described_class::EncodeAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'utf-8'
             ).call
           )
         )
-        overlay.add_encode_attribute(
+        overlay.add_attribute(
           described_class::EncodeAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'utf-8'

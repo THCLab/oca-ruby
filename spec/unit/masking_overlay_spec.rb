@@ -14,14 +14,14 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
       before(:each) do
         overlay.description = 'desc'
 
-        overlay.add_mask_attribute(
+        overlay.add_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii1', value: 'PA_pseudo'
             ).call
           )
         )
-        overlay.add_mask_attribute(
+        overlay.add_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii2', value: 'PA_pseudo'
@@ -47,9 +47,9 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
     end
   end
 
-  describe '#add_mask_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_mask_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when mask_attribute is provided correctly' do
@@ -79,14 +79,14 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
   describe '#attr_masks' do
     context 'when mask_attributes are added' do
       before(:each) do
-        overlay.add_mask_attribute(
+        overlay.add_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii1', value: 'PA_pseudo'
             ).call
           )
         )
-        overlay.add_mask_attribute(
+        overlay.add_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii2', value: 'PA_pseudo'

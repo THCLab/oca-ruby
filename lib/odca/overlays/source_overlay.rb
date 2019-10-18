@@ -39,7 +39,7 @@ module Odca
         source_attributes.empty?
       end
 
-      def add_source_attribute(source_attribute)
+      def add_attribute(source_attribute)
         return if source_attribute.nil? || source_attribute.source.nil?
         source_attributes << source_attribute
       end

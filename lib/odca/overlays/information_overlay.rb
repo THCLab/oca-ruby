@@ -41,7 +41,7 @@ module Odca
         information_attributes.empty?
       end
 
-      def add_information_attribute(information_attribute)
+      def add_attribute(information_attribute)
         if information_attribute.nil? ||
             information_attribute.information.empty?
           return

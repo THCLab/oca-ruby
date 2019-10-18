@@ -32,7 +32,7 @@ module Odca
         mask_attributes.empty?
       end
 
-      def add_mask_attribute(mask_attribute)
+      def add_attribute(mask_attribute)
         return if mask_attribute.nil? || mask_attribute.attr_name.strip.empty?
         mask_attributes << mask_attribute
       end
@@ -66,10 +66,10 @@ module Odca
 
         def call
           mask = if value.nil? || value.strip.empty?
-                      Odca::NullValue.new
-                    else
-                      value.strip
-                    end
+                   Odca::NullValue.new
+                 else
+                   value.strip
+                 end
           {
             attr_name: attr_name.strip,
             mask: mask

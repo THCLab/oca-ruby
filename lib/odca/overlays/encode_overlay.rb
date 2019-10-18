@@ -43,7 +43,7 @@ module Odca
         encode_attributes.empty?
       end
 
-      def add_encode_attribute(encode_attribute)
+      def add_attribute(encode_attribute)
         return if encode_attribute.nil? || encode_attribute.encoding.empty?
         encode_attributes << encode_attribute
       end

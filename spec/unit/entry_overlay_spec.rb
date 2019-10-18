@@ -15,14 +15,14 @@ RSpec.describe Odca::Overlays::EntryOverlay do
         overlay.description = 'desc'
         overlay.language = 'en'
 
-        overlay.add_entry_attribute(
+        overlay.add_attribute(
           described_class::EntryAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'opt1|opt2|opt3'
             ).call
           )
         )
-        overlay.add_entry_attribute(
+        overlay.add_attribute(
           described_class::EntryAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'o1|o2'
@@ -49,9 +49,9 @@ RSpec.describe Odca::Overlays::EntryOverlay do
     end
   end
 
-  describe '#add_entry_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_entry_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when entry_attribute is provided correctly' do
@@ -81,14 +81,14 @@ RSpec.describe Odca::Overlays::EntryOverlay do
   describe '#attr_entries' do
     context 'when entry_attributes are added' do
       before(:each) do
-        overlay.add_entry_attribute(
+        overlay.add_attribute(
           described_class::EntryAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'opt1|opt2|opt3'
             ).call
           )
         )
-        overlay.add_entry_attribute(
+        overlay.add_attribute(
           described_class::EntryAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'o1|o2'

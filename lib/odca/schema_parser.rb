@@ -59,86 +59,37 @@ module Odca
 
     def add_attribute(to:, schema_base_name:, attr_name:, value:)
       overlay = to
-      case overlay.class.name.split('::').last
-      when 'FormatOverlay'
-        overlay.add_format_attribute(
-          Odca::Overlays::FormatOverlay::FormatAttribute.new(
-            Odca::Overlays::FormatOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
+      overlay_name = overlay.class.name.split('::').last
+      attribute_class = overlay.class
+        .const_get(overlay_name.gsub('Overlay', 'Attribute'))
+      validator_class = overlay.class
+        .const_get('InputValidator')
+
+      overlay.add_attribute(
+        attribute_class.new(
+          validator_class.new(
+            attr_name: attr_name,
+            value: value
+          ).call
         )
+      )
+
+      case overlay_name
+      when 'FormatOverlay'
         overlay.description = "Attribute formats for #{schema_base_name}"
       when 'LabelOverlay'
-        overlay.add_label_attribute(
-          Odca::Overlays::LabelOverlay::LabelAttribute.new(
-            Odca::Overlays::LabelOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
         overlay.description = "Category and attribute labels for #{schema_base_name}"
       when 'EncodeOverlay'
-        overlay.add_encode_attribute(
-          Odca::Overlays::EncodeOverlay::EncodeAttribute.new(
-            Odca::Overlays::EncodeOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
         overlay.description = "Character set encoding for #{schema_base_name}"
       when 'EntryOverlay'
-        overlay.add_entry_attribute(
-          Odca::Overlays::EntryOverlay::EntryAttribute.new(
-            Odca::Overlays::EntryOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
         overlay.description = "Field entries for #{schema_base_name}"
       when 'InformationOverlay'
-        overlay.add_information_attribute(
-          Odca::Overlays::InformationOverlay::InformationAttribute.new(
-            Odca::Overlays::InformationOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
         overlay.description = "Informational items for #{schema_base_name}"
       when 'SourceOverlay'
-        overlay.add_source_attribute(
-          Odca::Overlays::SourceOverlay::SourceAttribute.new(
-            Odca::Overlays::SourceOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
         overlay.description = "Source endpoints for #{schema_base_name}"
       when 'ReviewOverlay'
-        overlay.add_review_attribute(
-          Odca::Overlays::ReviewOverlay::ReviewAttribute.new(
-            Odca::Overlays::ReviewOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
         overlay.description = "Field entry review comments for #{schema_base_name}"
       when 'MaskingOverlay'
-        overlay.add_masking_attribute(
-          Odca::Overlays::MaskingOverlay::MaskingAttribute.new(
-            Odca::Overlays::MaskingOverlay::InputValidator.new(
-              attr_name: attr_name,
-              value: value
-            ).call
-          )
-        )
         overlay.description = "Masking attributes for #{schema_base_name}"
       else
         puts "Error uknown overlay: #{overlay}"

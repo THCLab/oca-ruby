@@ -15,21 +15,21 @@ RSpec.describe Odca::Overlays::LabelOverlay do
         overlay.description = 'desc'
         overlay.language = 'en'
 
-        overlay.add_label_attribute(
+        overlay.add_attribute(
           described_class::LabelAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'Cat | lab'
             ).call
           )
         )
-        overlay.add_label_attribute(
+        overlay.add_attribute(
           described_class::LabelAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'Cat | Second label'
             ).call
           )
         )
-        overlay.add_label_attribute(
+        overlay.add_attribute(
           described_class::LabelAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'third_attr', value: 'Other category | label 3'
@@ -66,9 +66,9 @@ RSpec.describe Odca::Overlays::LabelOverlay do
     end
   end
 
-  describe '#add_label_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_label_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when label_attribute is provided correctly' do
@@ -97,14 +97,14 @@ RSpec.describe Odca::Overlays::LabelOverlay do
 
   context 'generating categories and labels collections' do
     before(:each) do
-      overlay.add_label_attribute(
+      overlay.add_attribute(
         described_class::LabelAttribute.new(
           described_class::InputValidator.new(
             attr_name: 'attr_name', value: 'Cat | lab'
           ).call
         )
       )
-      overlay.add_label_attribute(
+      overlay.add_attribute(
         described_class::LabelAttribute.new(
           described_class::InputValidator.new(
             attr_name: 'sec_attr', value: 'Label'

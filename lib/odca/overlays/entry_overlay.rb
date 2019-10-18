@@ -41,7 +41,7 @@ module Odca
         entry_attributes.empty?
       end
 
-      def add_entry_attribute(entry_attribute)
+      def add_attribute(entry_attribute)
         return if entry_attribute.nil? || entry_attribute.entries.empty?
         entry_attributes << entry_attribute
       end

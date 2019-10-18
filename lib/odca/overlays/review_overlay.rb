@@ -41,7 +41,7 @@ module Odca
         review_attributes.empty?
       end
 
-      def add_review_attribute(review_attribute)
+      def add_attribute(review_attribute)
         return if review_attribute.nil? || review_attribute.comment.nil?
         review_attributes << review_attribute
       end

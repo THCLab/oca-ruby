@@ -39,7 +39,7 @@ module Odca
         format_attributes.empty?
       end
 
-      def add_format_attribute(format_attribute)
+      def add_attribute(format_attribute)
         return if format_attribute.nil? || format_attribute.format.empty?
         format_attributes << format_attribute
       end

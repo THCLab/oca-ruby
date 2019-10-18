@@ -14,21 +14,21 @@ RSpec.describe Odca::Overlays::FormatOverlay do
       before(:each) do
         overlay.description = 'desc'
 
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'DD/MM/YYYY'
             ).call
           )
         )
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'YYYY/MM/DD'
             ).call
           )
         )
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'third_attr', value: 'MM/DD/YYYY'
@@ -55,9 +55,9 @@ RSpec.describe Odca::Overlays::FormatOverlay do
     end
   end
 
-  describe '#add_format_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_format_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when format_attribute is provided correctly' do
@@ -87,14 +87,14 @@ RSpec.describe Odca::Overlays::FormatOverlay do
   describe '#attr_formats' do
     context 'when format_attributes are added' do
       before(:each) do
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'DD/MM/YYYY'
             ).call
           )
         )
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'YYYY/MM/DD'

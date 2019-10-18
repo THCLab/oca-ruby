@@ -14,14 +14,14 @@ RSpec.describe Odca::Overlays::SourceOverlay do
       before(:each) do
         overlay.description = 'desc'
 
-        overlay.add_source_attribute(
+        overlay.add_attribute(
           described_class::SourceAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'Y'
             ).call
           )
         )
-        overlay.add_source_attribute(
+        overlay.add_attribute(
           described_class::SourceAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: ''
@@ -46,9 +46,9 @@ RSpec.describe Odca::Overlays::SourceOverlay do
     end
   end
 
-  describe '#add_source_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_source_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when source_attribute is provided correctly' do
@@ -78,14 +78,14 @@ RSpec.describe Odca::Overlays::SourceOverlay do
   describe '#attr_sources' do
     context 'when source_attributes are added' do
       before(:each) do
-        overlay.add_source_attribute(
+        overlay.add_attribute(
           described_class::SourceAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'Y'
             ).call
           )
         )
-        overlay.add_source_attribute(
+        overlay.add_attribute(
           described_class::SourceAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'Y'
