@@ -3,9 +3,9 @@ require 'odca/null_value'
 
 module Odca
   module Overlays
-    class MappingOverlay
+    class MaskingOverlay
       extend Forwardable
-      attr_reader :mapping_attributes, :header
+      attr_reader :masking_attributes, :header
 
       def_delegators :header,
         :issued_by, :type,
@@ -13,8 +13,8 @@ module Odca
         :description, :description=
 
       def initialize(header)
-        @mapping_attributes = []
-        header.type = 'spec/overlay/mapping/1.0'
+        @masking_attributes = []
+        header.type = 'spec/overlay/masking/1.0'
         @header = header
       end
 
@@ -24,31 +24,31 @@ module Odca
 
       def to_h
         header.to_h.merge(
-          attr_mappings: attr_mappings
+          attr_maskings: attr_maskings
         )
       end
 
       def empty?
-        mapping_attributes.empty?
+        masking_attributes.empty?
       end
 
-      def add_mapping_attribute(mapping_attribute)
-        return if mapping_attribute.nil? || mapping_attribute.attr_name.strip.empty?
-        mapping_attributes << mapping_attribute
+      def add_masking_attribute(masking_attribute)
+        return if masking_attribute.nil? || masking_attribute.attr_name.strip.empty?
+        masking_attributes << masking_attribute
       end
 
-      private def attr_mappings
-        mapping_attributes.each_with_object({}) do |attr, memo|
-          memo[attr.attr_name] = attr.mapping
+      private def attr_maskings
+        masking_attributes.each_with_object({}) do |attr, memo|
+          memo[attr.attr_name] = attr.masking
         end
       end
 
-      class MappingAttribute
-        attr_reader :attr_name, :mapping
+      class MaskingAttribute
+        attr_reader :attr_name, :masking
 
-        def initialize(attr_name:, mapping:)
+        def initialize(attr_name:, masking:)
           @attr_name = attr_name
-          @mapping = mapping
+          @masking = masking
         end
       end
 
@@ -65,14 +65,14 @@ module Odca
         end
 
         def call
-          mapping = if value.nil? || value.strip.empty?
+          masking = if value.nil? || value.strip.empty?
                       Odca::NullValue.new
                     else
                       value.strip
                     end
           {
             attr_name: attr_name.strip,
-            mapping: mapping
+            masking: masking
           }
         end
       end

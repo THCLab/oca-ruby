@@ -130,16 +130,16 @@ module Odca
           )
         )
         overlay.description = "Field entry review comments for #{schema_base_name}"
-      when 'MappingOverlay'
-        overlay.add_mapping_attribute(
-          Odca::Overlays::MappingOverlay::MappingAttribute.new(
-            Odca::Overlays::MappingOverlay::InputValidator.new(
+      when 'MaskingOverlay'
+        overlay.add_masking_attribute(
+          Odca::Overlays::MaskingOverlay::MaskingAttribute.new(
+            Odca::Overlays::MaskingOverlay::InputValidator.new(
               attr_name: attr_name,
               value: value
             ).call
           )
         )
-        overlay.description = "Mapping attributes for #{schema_base_name}"
+        overlay.description = "Masking attributes for #{schema_base_name}"
       else
         puts "Error uknown overlay: #{overlay}"
       end
