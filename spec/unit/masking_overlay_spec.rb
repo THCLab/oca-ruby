@@ -14,14 +14,14 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
       before(:each) do
         overlay.description = 'desc'
 
-        overlay.add_masking_attribute(
+        overlay.add_mask_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii1', value: 'PA_pseudo'
             ).call
           )
         )
-        overlay.add_masking_attribute(
+        overlay.add_mask_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii2', value: 'PA_pseudo'
@@ -38,7 +38,7 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
           issued_by: '',
           role: 'role',
           purpose: 'purpose',
-          attr_maskings: {
+          attr_masks: {
             'pii1' => 'PA_pseudo',
             'pii2' => 'PA_pseudo'
           }
@@ -47,12 +47,12 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
     end
   end
 
-  describe '#add_masking_attribute' do
+  describe '#add_mask_attribute' do
     before(:each) do
-      overlay.add_masking_attribute(attribute)
+      overlay.add_mask_attribute(attribute)
     end
 
-    context 'when masking_attribute is provided correctly' do
+    context 'when mask_attribute is provided correctly' do
       let(:attribute) do
         described_class::MaskingAttribute.new(
           described_class::InputValidator.new(
@@ -61,32 +61,32 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
         )
       end
 
-      it 'adds attribute to masking_attributes array' do
-        expect(overlay.masking_attributes)
+      it 'adds attribute to mask_attributes array' do
+        expect(overlay.mask_attributes)
           .to contain_exactly(attribute)
       end
     end
 
-    context 'when masking_attribute is nil' do
+    context 'when mask_attribute is nil' do
       let(:attribute) { nil }
 
-      it 'ignores masking_attribute' do
-        expect(overlay.masking_attributes).to be_empty
+      it 'ignores mask_attribute' do
+        expect(overlay.mask_attributes).to be_empty
       end
     end
   end
 
-  describe '#attr_masking' do
-    context 'when masking_attributes are added' do
+  describe '#attr_masks' do
+    context 'when mask_attributes are added' do
       before(:each) do
-        overlay.add_masking_attribute(
+        overlay.add_mask_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii1', value: 'PA_pseudo'
             ).call
           )
         )
-        overlay.add_masking_attribute(
+        overlay.add_mask_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii2', value: 'PA_pseudo'
@@ -95,8 +95,8 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
         )
       end
 
-      it 'returns hash of attribute_names and maskings' do
-        expect(overlay.__send__(:attr_maskings))
+      it 'returns hash of attribute_names and masks' do
+        expect(overlay.__send__(:attr_masks))
           .to include(
             'pii1' => 'PA_pseudo',
             'pii2' => 'PA_pseudo'
@@ -114,10 +114,10 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
       context 'record is filled' do
         let(:value) { 'PA_pseudo' }
 
-        it 'sets value as masking' do
+        it 'sets value as mask' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            masking: 'PA_pseudo'
+            mask: 'PA_pseudo'
           )
         end
       end
@@ -125,10 +125,10 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
       context 'record is empty' do
         let(:value) { '  ' }
 
-        it 'sets masking as null_value' do
+        it 'sets mask as null_value' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            masking: be_a(Odca::NullValue)
+            mask: be_a(Odca::NullValue)
           )
         end
       end

@@ -5,7 +5,7 @@ module Odca
   module Overlays
     class MaskingOverlay
       extend Forwardable
-      attr_reader :masking_attributes, :header
+      attr_reader :mask_attributes, :header
 
       def_delegators :header,
         :issued_by, :type,
@@ -13,7 +13,7 @@ module Odca
         :description, :description=
 
       def initialize(header)
-        @masking_attributes = []
+        @mask_attributes = []
         header.type = 'spec/overlay/masking/1.0'
         @header = header
       end
@@ -24,31 +24,31 @@ module Odca
 
       def to_h
         header.to_h.merge(
-          attr_maskings: attr_maskings
+          attr_masks: attr_masks
         )
       end
 
       def empty?
-        masking_attributes.empty?
+        mask_attributes.empty?
       end
 
-      def add_masking_attribute(masking_attribute)
-        return if masking_attribute.nil? || masking_attribute.attr_name.strip.empty?
-        masking_attributes << masking_attribute
+      def add_mask_attribute(mask_attribute)
+        return if mask_attribute.nil? || mask_attribute.attr_name.strip.empty?
+        mask_attributes << mask_attribute
       end
 
-      private def attr_maskings
-        masking_attributes.each_with_object({}) do |attr, memo|
-          memo[attr.attr_name] = attr.masking
+      private def attr_masks
+        mask_attributes.each_with_object({}) do |attr, memo|
+          memo[attr.attr_name] = attr.mask
         end
       end
 
       class MaskingAttribute
-        attr_reader :attr_name, :masking
+        attr_reader :attr_name, :mask
 
-        def initialize(attr_name:, masking:)
+        def initialize(attr_name:, mask:)
           @attr_name = attr_name
-          @masking = masking
+          @mask = mask
         end
       end
 
@@ -65,14 +65,14 @@ module Odca
         end
 
         def call
-          masking = if value.nil? || value.strip.empty?
+          mask = if value.nil? || value.strip.empty?
                       Odca::NullValue.new
                     else
                       value.strip
                     end
           {
             attr_name: attr_name.strip,
-            masking: masking
+            mask: mask
           }
         end
       end
