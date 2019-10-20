@@ -1,6 +1,6 @@
 ;;;;;;;;;;Clinician;Clinician;;;Clinician;Clinician
 ;;;;;;;;;;Patient answer;Patient answer;;;Patient answer;Patient answer
-Schema Base [SB];SB: Description;SB: Classification;SB: Attribute Name;SB: Attribute Type;SB: PII;Format Overlay;Label Overlay;Encode Overlay;Mapping Overlay;Entry Overlay;Information Overlay;Label Overlay;Encode Overlay;Entry Overlay;Information Overlay
+Schema Base [SB];SB: Description;SB: Classification;SB: Attribute Name;SB: Attribute Type;SB: PII;Format Overlay;Label Overlay;Encode Overlay;Masking Overlay;Entry Overlay;Information Overlay;Label Overlay;Encode Overlay;Entry Overlay;Information Overlay
 ;;;;;;;en_US;;;en_US;en_US;ja-JP;;ja_JP;ja_JP
 Demographics;A schema to capture statistical data about the characteristics of a population, such as age, gender and race of the people within it;GICS:35202010;BRTHD;Date;Y;DD/MM/YYYY;Date of Birth;utf-8;PA_pseudo;;;生年月日;Shift-JIS;;
 Demographics;A schema to capture statistical data about the characteristics of a population, such as age, gender and race of the people within it;GICS:35202010;AGEIC;Number;;4;Age;utf-8;PA_pseudo;;Fixed unit: Years;年齢;Shift-JIS;;固定単位：年
