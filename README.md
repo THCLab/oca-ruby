@@ -23,3 +23,10 @@ The flow of the parser is pretty simple:
 All files are stored within output directory. Each time parser will override all files (in most of the case it will just create new one as the name iclude hash link)
 
 For more details take a look on the examples or template in 'template/example.csv'
+
+
+# Development
+
+## Run test
+
+    rake spec
