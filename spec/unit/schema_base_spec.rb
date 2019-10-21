@@ -30,7 +30,7 @@ RSpec.describe Odca::SchemaBase do
         expect(schema_base.to_h).to eql(
           '@context' => 'https://odca.tech/v1',
           name: 'sb_name',
-          type: 'spec/schame_base/1.0',
+          type: 'spec/schema_base/1.0',
           description: 'sb_desc',
           classification: 'sb_class',
           issued_by: '',

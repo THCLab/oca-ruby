@@ -37,7 +37,7 @@ RSpec.describe Odca::BigParser do
           'attributes',
           "@context"=>"https://odca.tech/v1",
           "name"=>"AuditOverview",
-          "type"=>"spec/schame_base/1.0",
+          "type"=>"spec/schema_base/1.0",
           'pii_attributes' => include('auditReportNumber', 'auditReportOwner')
         )
       end

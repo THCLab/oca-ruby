@@ -44,7 +44,7 @@ module Odca
         {
           '@context' => 'https://odca.tech/v1',
           name: name,
-          type: 'spec/schame_base/1.0',
+          type: 'spec/schema_base/1.0',
           description: description,
           classification: classification || '',
           issued_by: ''

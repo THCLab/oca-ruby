@@ -27,7 +27,6 @@ module Odca
 
       def to_h
         header.to_h.merge(
-          language: language,
           default_encoding: DEFAULT_ENCODING,
           attr_encoding: attr_encoding
         )

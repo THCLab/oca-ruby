@@ -39,7 +39,6 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
           issued_by: '',
           role: 'role',
           purpose: 'purpose',
-          language: 'en',
           default_encoding: 'utf-8',
           attr_encoding: {
             'attr_name' => 'utf-8',
