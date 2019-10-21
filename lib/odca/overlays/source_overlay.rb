@@ -1,37 +1,18 @@
-require 'odca/overlays/header'
 require 'odca/null_value'
 
 module Odca
   module Overlays
     class SourceOverlay
-      extend Forwardable
-      attr_reader :source_attributes, :header
+      attr_reader :source_attributes
 
-      def_delegators :header,
-        :issued_by, :type, :role, :purpose, :description
-
-      def initialize(header)
+      def initialize
         @source_attributes = []
-        header.type = 'spec/overlay/source/1.0'
-        header.description = 'Source endpoints for '
-        @header = header
-      end
-
-      def to_json(options = {})
-        to_h.to_json(*options)
       end
 
       def to_h
-        header.to_h.merge(
+        {
           attr_sources: attr_sources
-        )
-      end
-
-      # @deprecated
-      def is_valid?
-        warn('[DEPRECATION] `is_valid?` is deprecated. ' \
-             'Please use `empty?` instead.')
-        !empty?
+        }
       end
 
       def empty?

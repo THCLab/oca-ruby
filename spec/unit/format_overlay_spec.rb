@@ -2,11 +2,7 @@ require 'odca/overlays/format_overlay'
 
 RSpec.describe Odca::Overlays::FormatOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new
   end
 
   describe '#to_h' do
@@ -37,12 +33,6 @@ RSpec.describe Odca::Overlays::FormatOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/format/1.0',
-          description: 'Attribute formats for ',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           attr_formats: {
             'attr_name' => 'DD/MM/YYYY',
             'sec_attr' => 'YYYY/MM/DD',

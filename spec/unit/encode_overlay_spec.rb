@@ -2,18 +2,12 @@ require 'odca/overlays/encode_overlay'
 
 RSpec.describe Odca::Overlays::EncodeOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new
   end
 
   describe '#to_h' do
     context 'encode overlay has encode attributes' do
       before(:each) do
-        overlay.language = 'en'
-
         overlay.add_attribute(
           described_class::EncodeAttribute.new(
             described_class::InputValidator.new(
@@ -32,12 +26,6 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/encode/1.0',
-          description: 'Character set encoding for ',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           default_encoding: 'utf-8',
           attr_encoding: {
             'attr_name' => 'utf-8',

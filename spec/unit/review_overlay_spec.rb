@@ -2,18 +2,12 @@ require 'odca/overlays/review_overlay'
 
 RSpec.describe Odca::Overlays::ReviewOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new(language: 'en')
   end
 
   describe '#to_h' do
     context 'review overlay has review attributes' do
       before(:each) do
-        overlay.language = 'en'
-
         overlay.add_attribute(
           described_class::ReviewAttribute.new(
             described_class::InputValidator.new(
@@ -32,12 +26,6 @@ RSpec.describe Odca::Overlays::ReviewOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/review/1.0',
-          description: 'Field entry review comments for ',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           language: 'en',
           attr_comments: {
             'attr_name' => ''

@@ -1,13 +1,14 @@
 module Odca
   module Overlays
     class Header
-      attr_accessor :description, :type
-      attr_reader :issued_by, :role, :purpose
+      attr_reader :issued_by, :role, :purpose, :description, :type
 
-      def initialize(role:, purpose:, issued_by: '')
+      def initialize(role:, purpose:, description:, type:, issued_by: '')
         @issued_by = issued_by
         @role = role
         @purpose = purpose
+        @description = description
+        @type = type
       end
 
       def to_h

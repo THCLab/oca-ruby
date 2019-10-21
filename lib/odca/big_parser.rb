@@ -62,15 +62,9 @@ module Odca
 
       overlays.each do |overlay|
         next if overlay.empty?
-        puts "Processing #{overlay.description}"
 
         puts 'Saving object...'
-        save_overlay(
-          Odca::ParentfulOverlay.new(
-            parent: schema_base, overlay: overlay
-          ),
-          path: path
-        )
+        save_overlay(overlay, path: path)
       end
     end
 
@@ -85,13 +79,13 @@ module Odca
       end
     end
 
-    def save_overlay(parentful_overlay, path:)
-      overlay_class_name = parentful_overlay.overlay.class
+    def save_overlay(headful_overlay, path:)
+      overlay_class_name = headful_overlay.overlay.class
         .name.split('::').last
-      hl = 'hl:' + HashlinkGenerator.call(parentful_overlay)
+      hl = 'hl:' + HashlinkGenerator.call(headful_overlay)
 
       File.open("#{path}/#{overlay_class_name}-#{hl}.json", 'w') do |f|
-        f.write(JSON.pretty_generate(parentful_overlay))
+        f.write(JSON.pretty_generate(headful_overlay))
       end
     end
 

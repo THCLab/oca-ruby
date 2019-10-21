@@ -1,4 +1,5 @@
 require 'odca/schema_base'
+require 'odca/headful_overlay'
 require 'odca/parentful_overlay'
 require 'odca/overlays/format_overlay.rb'
 require 'odca/overlays/label_overlay.rb'

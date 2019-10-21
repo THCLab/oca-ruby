@@ -2,11 +2,7 @@ require 'odca/overlays/source_overlay'
 
 RSpec.describe Odca::Overlays::SourceOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new
   end
 
   describe '#to_h' do
@@ -30,12 +26,6 @@ RSpec.describe Odca::Overlays::SourceOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/source/1.0',
-          description: 'Source endpoints for ',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           attr_sources: {
             'attr_name' => ''
           }

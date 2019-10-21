@@ -50,7 +50,13 @@ module Odca
             value: attr[:value]
           )
         end
-        overlays << overlay
+        overlays << Odca::HeadfulOverlay.new(
+          parentful_overlay: Odca::ParentfulOverlay.new(
+            parent: schema_base, overlay: overlay
+          ),
+          role: overlay_dto.role,
+          purpose: overlay_dto.purpose
+        )
       end
 
       [schema_base, overlays]
@@ -82,14 +88,11 @@ module Odca
       overlay_class = Odca::Overlays.const_get(
         overlay_dto.name.delete(' ')
       )
-      overlay = overlay_class.new(
-        Odca::Overlays::Header.new(
-          role: overlay_dto.role,
-          purpose: overlay_dto.purpose
-        )
-      )
-      overlay.language = overlay_dto.language if defined? overlay.language
-      overlay
+      if overlay_class.method_defined? 'language'
+        overlay_class.new(language: overlay_dto.language)
+      else
+        overlay_class.new
+      end
       rescue => e
         raise "Not found Overlay Class for '#{overlay_dto.name}': #{e}"
     end

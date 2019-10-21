@@ -1,39 +1,20 @@
-require 'odca/overlays/header'
 require 'odca/null_value'
 
 module Odca
   module Overlays
     class EntryOverlay
-      extend Forwardable
-      attr_accessor :language
-      attr_reader :entry_attributes, :header
+      attr_reader :entry_attributes, :language
 
-      def_delegators :header,
-        :issued_by, :type, :role, :purpose, :description
-
-      def initialize(header)
+      def initialize(language:)
         @entry_attributes = []
-        header.type = 'spec/overlay/entry/1.0'
-        header.description = 'Field entries for '
-        @header = header
-      end
-
-      def to_json(options = {})
-        to_h.to_json(*options)
+        @language = language
       end
 
       def to_h
-        header.to_h.merge(
+        {
           language: language,
           attr_entries: attr_entries
-        )
-      end
-
-      # @deprecated
-      def is_valid?
-        warn('[DEPRECATION] `is_valid?` is deprecated. ' \
-             'Please use `empty?` instead.')
-        !empty?
+        }
       end
 
       def empty?
