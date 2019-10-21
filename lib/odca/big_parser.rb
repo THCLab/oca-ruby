@@ -18,7 +18,6 @@ module Odca
     def call
       columns_number = records[0].size
 
-      puts 'Reading overlays ...'
       (6..columns_number - 1).each do |i|
         overlay_dtos << OverlayDto.new(
           index: i,
@@ -30,9 +29,7 @@ module Odca
       end
       records.slice!(0, 4)
 
-      puts 'Overlays loaded, start creating objects'
       schemas = separate_schemas(records)
-
       schemas.each do |schema|
         schema_base, overlays = schema.call
         save(schema_base: schema_base, overlays: overlays)
@@ -57,22 +54,16 @@ module Odca
     def save(schema_base:, overlays:)
       path = "#{output_dir}/#{schema_base.name}"
 
-      puts "Writing SchemaBase: #{schema_base.name}"
       save_schema_base(schema_base, path: path)
 
       overlays.each do |overlay|
         next if overlay.empty?
-
-        puts 'Saving object...'
         save_overlay(overlay, path: path)
       end
     end
 
     def save_schema_base(schema_base, path:)
-      unless Dir.exist?(path)
-        puts 'Create dir'
-        FileUtils.mkdir_p(path)
-      end
+      FileUtils.mkdir_p(path) unless Dir.exist?(path)
 
       File.open("#{path}.json", 'w') do |f|
         f.write(JSON.pretty_generate(schema_base))
