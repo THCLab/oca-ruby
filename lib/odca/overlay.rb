@@ -30,7 +30,7 @@ module Odca
         end
 
         overlay.const_set(
-          overlay_class_name.gsub('Overlay', 'Attribute'),
+          overlay_class_name.gsub('Overlay', '') << 'Attribute',
           Class.new do
             attr_reader :attr_name, :value
 
