@@ -4,50 +4,39 @@ module Odca
   module Overlay
     def self.extended(overlay)
       overlay_class_name = overlay.name.split('::').last
-      overlay_name = overlay_class_name.gsub('Overlay', '').downcase
 
       overlay.class_eval do
-        attr_reader "#{overlay_name}_attributes"
+        attr_reader :attributes
 
-        define_method :_initialize do
-          instance_variable_set(
-            "@#{overlay_name}_attributes", []
-          )
+        def _initialize
+          @attributes = []
         end
 
         alias_method :initialize, :_initialize
 
-        define_method :empty? do
-          instance_variable_get(
-            "@#{overlay_name}_attributes"
-          ).empty?
+        def empty?
+          attributes.empty?
         end
 
-        define_method :add_attribute do |attr|
-          return if attr.nil? || attr.__send__(overlay_name).empty?
-          instance_variable_get(
-            "@#{overlay_name}_attributes"
-          ) << attr
+        def add_attribute(attr)
+          return if attr.nil? || attr.value.nil?
+          attributes << attr
         end
 
-        define_method "attr_#{overlay_name}s" do
-          instance_variable_get(
-            "@#{overlay_name}_attributes"
-          ).each_with_object({}) do |attr, memo|
-            memo[attr.attr_name] = attr.__send__(overlay_name)
+        def attr_values
+          attributes.each_with_object({}) do |attr, memo|
+            memo[attr.attr_name] = attr.value
           end
         end
 
         overlay.const_set(
           overlay_class_name.gsub('Overlay', 'Attribute'),
           Class.new do
-            attr_reader :attr_name, overlay_name
+            attr_reader :attr_name, :value
 
-            define_method :initialize do |args|
-              @attr_name = args.fetch(:attr_name)
-              instance_variable_set(
-                "@#{overlay_name}", args.fetch(overlay_name.to_sym)
-              )
+            def initialize(attr_name:, value:)
+              @attr_name = attr_name
+              @value = value
             end
           end
         )
@@ -69,7 +58,7 @@ module Odca
             define_method :call do
               {
                 attr_name: attr_name.strip,
-                overlay_name.to_sym => validate(value)
+                value: validate(value)
               }
             end
 

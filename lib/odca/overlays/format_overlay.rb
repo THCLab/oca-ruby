@@ -7,7 +7,7 @@ module Odca
 
       def to_h
         {
-          attr_formats: attr_formats
+          attr_formats: attr_values
         }
       end
     end
