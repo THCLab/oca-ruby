@@ -6,7 +6,7 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
   end
 
   describe '#to_h' do
-    context 'encode overlay has encode attributes' do
+    context 'encode overlay has attributes' do
       before(:each) do
         overlay.add_attribute(
           described_class::EncodeAttribute.new(
@@ -41,7 +41,7 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
       overlay.add_attribute(attribute)
     end
 
-    context 'when encode_attribute is provided correctly' do
+    context 'when attribute is provided correctly' do
       let(:attribute) do
         described_class::EncodeAttribute.new(
           described_class::InputValidator.new(
@@ -50,23 +50,23 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
         )
       end
 
-      it 'adds attribute to encode_attributes array' do
-        expect(overlay.encode_attributes)
+      it 'adds attribute to attributes array' do
+        expect(overlay.attributes)
           .to contain_exactly(attribute)
       end
     end
 
-    context 'when encode_attribute is nil' do
+    context 'when attribute is nil' do
       let(:attribute) { nil }
 
-      it 'ignores encode_attribute' do
-        expect(overlay.encode_attributes).to be_empty
+      it 'ignores attribute' do
+        expect(overlay.attributes).to be_empty
       end
     end
   end
 
-  describe '#attr_encoding' do
-    context 'when encode_attributes are added' do
+  describe '#attr_values' do
+    context 'when attributes are added' do
       before(:each) do
         overlay.add_attribute(
           described_class::EncodeAttribute.new(
@@ -85,7 +85,7 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
       end
 
       it 'returns hash of attribute_names and encodings' do
-        expect(overlay.__send__(:attr_encoding))
+        expect(overlay.__send__(:attr_values))
           .to include(
             'attr_name' => 'utf-8',
             'sec_attr' => 'utf-8'
@@ -103,10 +103,10 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
       context 'record is filled' do
         let(:value) { 'utf-8' }
 
-        it 'sets value as encoding' do
+        it 'sets input as value' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            encoding: 'utf-8'
+            value: 'utf-8'
           )
         end
       end
@@ -114,10 +114,10 @@ RSpec.describe Odca::Overlays::EncodeOverlay do
       context 'record is empty' do
         let(:value) { '  ' }
 
-        it 'sets encoding as null_value' do
+        it 'sets value as null_value' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            encoding: be_a(Odca::NullValue)
+            value: be_a(Odca::NullValue)
           )
         end
       end

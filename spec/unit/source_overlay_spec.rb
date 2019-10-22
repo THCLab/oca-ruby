@@ -6,7 +6,7 @@ RSpec.describe Odca::Overlays::SourceOverlay do
   end
 
   describe '#to_h' do
-    context 'source overlay has source attributes' do
+    context 'source overlay has attributes' do
       before(:each) do
         overlay.add_attribute(
           described_class::SourceAttribute.new(
@@ -39,7 +39,7 @@ RSpec.describe Odca::Overlays::SourceOverlay do
       overlay.add_attribute(attribute)
     end
 
-    context 'when source_attribute is provided correctly' do
+    context 'when attribute is provided correctly' do
       let(:attribute) do
         described_class::SourceAttribute.new(
           described_class::InputValidator.new(
@@ -48,23 +48,23 @@ RSpec.describe Odca::Overlays::SourceOverlay do
         )
       end
 
-      it 'adds attribute to source_attributes array' do
-        expect(overlay.source_attributes)
+      it 'adds attribute to attributes array' do
+        expect(overlay.attributes)
           .to contain_exactly(attribute)
       end
     end
 
-    context 'when source_attribute is nil' do
+    context 'when attribute is nil' do
       let(:attribute) { nil }
 
-      it 'ignores source_attribute' do
-        expect(overlay.source_attributes).to be_empty
+      it 'ignores attribute' do
+        expect(overlay.attributes).to be_empty
       end
     end
   end
 
-  describe '#attr_sources' do
-    context 'when source_attributes are added' do
+  describe '#attr_values' do
+    context 'when attributes are added' do
       before(:each) do
         overlay.add_attribute(
           described_class::SourceAttribute.new(
@@ -83,7 +83,7 @@ RSpec.describe Odca::Overlays::SourceOverlay do
       end
 
       it 'returns hash of attribute_names as keys' do
-        expect(overlay.__send__(:attr_sources))
+        expect(overlay.__send__(:attr_values))
           .to include(
             'attr_name' => '',
             'sec_attr' => ''
@@ -101,10 +101,10 @@ RSpec.describe Odca::Overlays::SourceOverlay do
       context 'record is filled' do
         let(:value) { 'Y' }
 
-        it 'sets source as empty string' do
+        it 'sets value as empty string' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            source: ''
+            value: ''
           )
         end
       end
@@ -112,10 +112,10 @@ RSpec.describe Odca::Overlays::SourceOverlay do
       context 'record is empty' do
         let(:value) { ' ' }
 
-        it 'sets source as null_value' do
+        it 'sets value as null_value' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            source: be_a(Odca::NullValue)
+            value: be_a(Odca::NullValue)
           )
         end
       end

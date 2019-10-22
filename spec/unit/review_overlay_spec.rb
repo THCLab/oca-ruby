@@ -40,7 +40,7 @@ RSpec.describe Odca::Overlays::ReviewOverlay do
       overlay.add_attribute(attribute)
     end
 
-    context 'when review_attribute is provided correctly' do
+    context 'when attribute is provided correctly' do
       let(:attribute) do
         described_class::ReviewAttribute.new(
           described_class::InputValidator.new(
@@ -49,23 +49,23 @@ RSpec.describe Odca::Overlays::ReviewOverlay do
         )
       end
 
-      it 'adds attribute to review_attributes array' do
-        expect(overlay.review_attributes)
+      it 'adds attribute to attributes array' do
+        expect(overlay.attributes)
           .to contain_exactly(attribute)
       end
     end
 
-    context 'when review_attribute is nil' do
+    context 'when attribute is nil' do
       let(:attribute) { nil }
 
-      it 'ignores review_attribute' do
-        expect(overlay.review_attributes).to be_empty
+      it 'ignores attribute' do
+        expect(overlay.attributes).to be_empty
       end
     end
   end
 
-  describe '#attr_comments' do
-    context 'when review_attributes are added' do
+  describe '#attr_values' do
+    context 'when attributes are added' do
       before(:each) do
         overlay.add_attribute(
           described_class::ReviewAttribute.new(
@@ -84,7 +84,7 @@ RSpec.describe Odca::Overlays::ReviewOverlay do
       end
 
       it 'returns hash of attribute_names as keys' do
-        expect(overlay.__send__(:attr_comments))
+        expect(overlay.__send__(:attr_values))
           .to include(
             'attr_name' => '',
             'sec_attr' => ''
@@ -102,10 +102,10 @@ RSpec.describe Odca::Overlays::ReviewOverlay do
       context 'record is filled' do
         let(:value) { 'Y' }
 
-        it 'sets comment as empty string' do
+        it 'sets value as empty string' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            comment: ''
+            value: ''
           )
         end
       end
@@ -113,10 +113,10 @@ RSpec.describe Odca::Overlays::ReviewOverlay do
       context 'record is empty' do
         let(:value) { ' ' }
 
-        it 'sets comment as null_value' do
+        it 'sets value as null_value' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            comment: be_a(Odca::NullValue)
+            value: be_a(Odca::NullValue)
           )
         end
       end

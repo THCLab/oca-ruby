@@ -40,7 +40,7 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
       overlay.add_attribute(attribute)
     end
 
-    context 'when mask_attribute is provided correctly' do
+    context 'when attribute is provided correctly' do
       let(:attribute) do
         described_class::MaskingAttribute.new(
           described_class::InputValidator.new(
@@ -49,23 +49,23 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
         )
       end
 
-      it 'adds attribute to mask_attributes array' do
-        expect(overlay.mask_attributes)
+      it 'adds attribute to attributes array' do
+        expect(overlay.attributes)
           .to contain_exactly(attribute)
       end
     end
 
-    context 'when mask_attribute is nil' do
+    context 'when attribute is nil' do
       let(:attribute) { nil }
 
-      it 'ignores mask_attribute' do
-        expect(overlay.mask_attributes).to be_empty
+      it 'ignores attribute' do
+        expect(overlay.attributes).to be_empty
       end
     end
   end
 
-  describe '#attr_masks' do
-    context 'when mask_attributes are added' do
+  describe '#attr_values' do
+    context 'when attributes are added' do
       before(:each) do
         overlay.add_attribute(
           described_class::MaskingAttribute.new(
@@ -84,7 +84,7 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
       end
 
       it 'returns hash of attribute_names and masks' do
-        expect(overlay.__send__(:attr_masks))
+        expect(overlay.__send__(:attr_values))
           .to include(
             'pii1' => 'PA_pseudo',
             'pii2' => 'PA_pseudo'
@@ -102,10 +102,10 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
       context 'record is filled' do
         let(:value) { 'PA_pseudo' }
 
-        it 'sets value as mask' do
+        it 'sets input as value' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            mask: 'PA_pseudo'
+            value: 'PA_pseudo'
           )
         end
       end
@@ -113,10 +113,10 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
       context 'record is empty' do
         let(:value) { '  ' }
 
-        it 'sets mask as null_value' do
+        it 'sets value as null_value' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            mask: be_a(Odca::NullValue)
+            value: be_a(Odca::NullValue)
           )
         end
       end

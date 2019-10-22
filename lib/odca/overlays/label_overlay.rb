@@ -3,10 +3,10 @@ require 'odca/null_value'
 module Odca
   module Overlays
     class LabelOverlay
-      attr_reader :label_attributes, :language
+      attr_reader :attributes, :language
 
       def initialize(language:)
-        @label_attributes = []
+        @attributes = []
         @language = language
       end
 
@@ -21,29 +21,29 @@ module Odca
       end
 
       def empty?
-        label_attributes.empty?
+        attributes.empty?
       end
 
-      def add_attribute(label_attribute)
-        return if label_attribute.nil? || label_attribute.name.strip.empty?
-        label_attributes << label_attribute
+      def add_attribute(attribute)
+        return if attribute.nil? || attribute.attr_name.strip.empty?
+        attributes << attribute
       end
 
       private def attr_labels
-        label_attributes.each_with_object({}) do |attr, memo|
-          memo[attr.name] = attr.label
+        attributes.each_with_object({}) do |attr, memo|
+          memo[attr.attr_name] = attr.label
         end
       end
 
       private def attr_categories
-        label_attributes.map(&:category).uniq.map do |cat|
+        attributes.map(&:category).uniq.map do |cat|
           next if cat.empty?
           cat.downcase.gsub(/\s+/, '_').to_sym
         end.compact
       end
 
       private def category_labels
-        label_attributes.map(&:category).uniq
+        attributes.map(&:category).uniq
           .each_with_object({}) do |cat, memo|
             next if cat.empty?
             memo[cat.downcase.gsub(/\s+/, '_').to_sym] = cat
@@ -51,18 +51,18 @@ module Odca
       end
 
       private def category_attributes
-        label_attributes.each_with_object({}) do |attr, memo|
+        attributes.each_with_object({}) do |attr, memo|
           next if attr.category.empty?
           category_attr = attr.category.downcase.gsub(/\s+/, '_').to_sym
-          (memo[category_attr] ||= []) << attr.name
+          (memo[category_attr] ||= []) << attr.attr_name
         end
       end
 
       class LabelAttribute
-        attr_reader :name, :category, :label
+        attr_reader :attr_name, :category, :label
 
-        def initialize(name:, category:, label:)
-          @name = name
+        def initialize(attr_name:, category:, label:)
+          @attr_name = attr_name
           @category = category
           @label = label
         end
@@ -94,7 +94,7 @@ module Odca
           end
 
           {
-            name: attr_name.strip,
+            attr_name: attr_name.strip,
             category: category,
             label: label
           }

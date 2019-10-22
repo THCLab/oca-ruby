@@ -6,7 +6,7 @@ RSpec.describe Odca::Overlays::InformationOverlay do
   end
 
   describe '#to_h' do
-    context 'information overlay has information attributes' do
+    context 'information overlay has attributes' do
       before(:each) do
         overlay.add_attribute(
           described_class::InformationAttribute.new(
@@ -41,7 +41,7 @@ RSpec.describe Odca::Overlays::InformationOverlay do
       overlay.add_attribute(attribute)
     end
 
-    context 'when information_attribute is provided correctly' do
+    context 'when attribute is provided correctly' do
       let(:attribute) do
         described_class::InformationAttribute.new(
           described_class::InputValidator.new(
@@ -50,23 +50,23 @@ RSpec.describe Odca::Overlays::InformationOverlay do
         )
       end
 
-      it 'adds attribute to information_attributes array' do
-        expect(overlay.information_attributes)
+      it 'adds attribute to attributes array' do
+        expect(overlay.attributes)
           .to contain_exactly(attribute)
       end
     end
 
-    context 'when information_attribute is nil' do
+    context 'when attribute is nil' do
       let(:attribute) { nil }
 
-      it 'ignores information_attribute' do
-        expect(overlay.information_attributes).to be_empty
+      it 'ignores attribute' do
+        expect(overlay.attributes).to be_empty
       end
     end
   end
 
-  describe '#attr_information' do
-    context 'when information_attributes are added' do
+  describe '#attr_values' do
+    context 'when attributes are added' do
       before(:each) do
         overlay.add_attribute(
           described_class::InformationAttribute.new(
@@ -85,7 +85,7 @@ RSpec.describe Odca::Overlays::InformationOverlay do
       end
 
       it 'returns hash of attribute_names and information' do
-        expect(overlay.__send__(:attr_information))
+        expect(overlay.__send__(:attr_values))
           .to include(
             'attr_name' => 'info',
             'sec_attr' => 'some info'
@@ -103,10 +103,10 @@ RSpec.describe Odca::Overlays::InformationOverlay do
       context 'record is filled' do
         let(:value) { 'info' }
 
-        it 'sets value as information' do
+        it 'sets input as value' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            information: 'info'
+            value: 'info'
           )
         end
       end
@@ -114,10 +114,10 @@ RSpec.describe Odca::Overlays::InformationOverlay do
       context 'record is empty' do
         let(:value) { '  ' }
 
-        it 'sets information as null_value' do
+        it 'sets value as null_value' do
           expect(validator.call).to include(
             attr_name: 'attr_name',
-            information: be_a(Odca::NullValue)
+            value: be_a(Odca::NullValue)
           )
         end
       end
