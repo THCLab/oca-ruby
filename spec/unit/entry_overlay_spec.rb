@@ -2,27 +2,20 @@ require 'odca/overlays/entry_overlay'
 
 RSpec.describe Odca::Overlays::EntryOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new(language: 'en')
   end
 
   describe '#to_h' do
     context 'entry overlay has entry attributes' do
       before(:each) do
-        overlay.description = 'desc'
-        overlay.language = 'en'
-
-        overlay.add_entry_attribute(
+        overlay.add_attribute(
           described_class::EntryAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'opt1|opt2|opt3'
             ).call
           )
         )
-        overlay.add_entry_attribute(
+        overlay.add_attribute(
           described_class::EntryAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'o1|o2'
@@ -33,12 +26,6 @@ RSpec.describe Odca::Overlays::EntryOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/entry/1.0',
-          description: 'desc',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           language: 'en',
           attr_entries: {
             'attr_name' => %w[opt1 opt2 opt3],
@@ -49,9 +36,9 @@ RSpec.describe Odca::Overlays::EntryOverlay do
     end
   end
 
-  describe '#add_entry_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_entry_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when entry_attribute is provided correctly' do
@@ -81,14 +68,14 @@ RSpec.describe Odca::Overlays::EntryOverlay do
   describe '#attr_entries' do
     context 'when entry_attributes are added' do
       before(:each) do
-        overlay.add_entry_attribute(
+        overlay.add_attribute(
           described_class::EntryAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'opt1|opt2|opt3'
             ).call
           )
         )
-        overlay.add_entry_attribute(
+        overlay.add_attribute(
           described_class::EntryAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'o1|o2'

@@ -2,26 +2,20 @@ require 'odca/overlays/source_overlay'
 
 RSpec.describe Odca::Overlays::SourceOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new
   end
 
   describe '#to_h' do
     context 'source overlay has source attributes' do
       before(:each) do
-        overlay.description = 'desc'
-
-        overlay.add_source_attribute(
+        overlay.add_attribute(
           described_class::SourceAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'Y'
             ).call
           )
         )
-        overlay.add_source_attribute(
+        overlay.add_attribute(
           described_class::SourceAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: ''
@@ -32,12 +26,6 @@ RSpec.describe Odca::Overlays::SourceOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/source/1.0',
-          description: 'desc',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           attr_sources: {
             'attr_name' => ''
           }
@@ -46,9 +34,9 @@ RSpec.describe Odca::Overlays::SourceOverlay do
     end
   end
 
-  describe '#add_source_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_source_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when source_attribute is provided correctly' do
@@ -78,14 +66,14 @@ RSpec.describe Odca::Overlays::SourceOverlay do
   describe '#attr_sources' do
     context 'when source_attributes are added' do
       before(:each) do
-        overlay.add_source_attribute(
+        overlay.add_attribute(
           described_class::SourceAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'Y'
             ).call
           )
         )
-        overlay.add_source_attribute(
+        overlay.add_attribute(
           described_class::SourceAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'Y'

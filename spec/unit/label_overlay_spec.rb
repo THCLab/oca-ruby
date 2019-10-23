@@ -2,34 +2,27 @@ require 'odca/overlays/label_overlay'
 
 RSpec.describe Odca::Overlays::LabelOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new(language: 'en')
   end
 
   describe '#to_h' do
     context 'label overlay has label attributes' do
       before(:each) do
-        overlay.description = 'desc'
-        overlay.language = 'en'
-
-        overlay.add_label_attribute(
+        overlay.add_attribute(
           described_class::LabelAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'Cat | lab'
             ).call
           )
         )
-        overlay.add_label_attribute(
+        overlay.add_attribute(
           described_class::LabelAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'Cat | Second label'
             ).call
           )
         )
-        overlay.add_label_attribute(
+        overlay.add_attribute(
           described_class::LabelAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'third_attr', value: 'Other category | label 3'
@@ -40,12 +33,6 @@ RSpec.describe Odca::Overlays::LabelOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/label/1.0',
-          description: 'desc',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           language: 'en',
           attr_labels: {
             'attr_name' => 'lab',
@@ -66,9 +53,9 @@ RSpec.describe Odca::Overlays::LabelOverlay do
     end
   end
 
-  describe '#add_label_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_label_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when label_attribute is provided correctly' do
@@ -97,14 +84,14 @@ RSpec.describe Odca::Overlays::LabelOverlay do
 
   context 'generating categories and labels collections' do
     before(:each) do
-      overlay.add_label_attribute(
+      overlay.add_attribute(
         described_class::LabelAttribute.new(
           described_class::InputValidator.new(
             attr_name: 'attr_name', value: 'Cat | lab'
           ).call
         )
       )
-      overlay.add_label_attribute(
+      overlay.add_attribute(
         described_class::LabelAttribute.new(
           described_class::InputValidator.new(
             attr_name: 'sec_attr', value: 'Label'

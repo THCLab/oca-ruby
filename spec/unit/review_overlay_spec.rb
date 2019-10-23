@@ -2,27 +2,20 @@ require 'odca/overlays/review_overlay'
 
 RSpec.describe Odca::Overlays::ReviewOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new(language: 'en')
   end
 
   describe '#to_h' do
     context 'review overlay has review attributes' do
       before(:each) do
-        overlay.description = 'desc'
-        overlay.language = 'en'
-
-        overlay.add_review_attribute(
+        overlay.add_attribute(
           described_class::ReviewAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'Y'
             ).call
           )
         )
-        overlay.add_review_attribute(
+        overlay.add_attribute(
           described_class::ReviewAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: ''
@@ -33,12 +26,6 @@ RSpec.describe Odca::Overlays::ReviewOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/review/1.0',
-          description: 'desc',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           language: 'en',
           attr_comments: {
             'attr_name' => ''
@@ -48,9 +35,9 @@ RSpec.describe Odca::Overlays::ReviewOverlay do
     end
   end
 
-  describe '#add_review_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_review_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when review_attribute is provided correctly' do
@@ -80,14 +67,14 @@ RSpec.describe Odca::Overlays::ReviewOverlay do
   describe '#attr_comments' do
     context 'when review_attributes are added' do
       before(:each) do
-        overlay.add_review_attribute(
+        overlay.add_attribute(
           described_class::ReviewAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'Y'
             ).call
           )
         )
-        overlay.add_review_attribute(
+        overlay.add_attribute(
           described_class::ReviewAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'Y'

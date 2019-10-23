@@ -1,47 +1,27 @@
-require 'odca/overlays/header'
 require 'odca/null_value'
 
 module Odca
   module Overlays
     class InformationOverlay
-      extend Forwardable
-      attr_accessor :language
-      attr_reader :information_attributes, :header
+      attr_reader :information_attributes, :language
 
-      def_delegators :header,
-        :issued_by, :type,
-        :role, :purpose,
-        :description, :description=
-
-      def initialize(header)
+      def initialize(language:)
         @information_attributes = []
-        header.type = 'spec/overlay/information/1.0'
-        @header = header
-      end
-
-      def to_json(options = {})
-        to_h.to_json(*options)
+        @language = language
       end
 
       def to_h
-        header.to_h.merge(
+        {
           language: language,
           attr_information: attr_information
-        )
-      end
-
-      # @deprecated
-      def is_valid?
-        warn('[DEPRECATION] `is_valid?` is deprecated. ' \
-             'Please use `empty?` instead.')
-        !empty?
+        }
       end
 
       def empty?
         information_attributes.empty?
       end
 
-      def add_information_attribute(information_attribute)
+      def add_attribute(information_attribute)
         if information_attribute.nil? ||
             information_attribute.information.empty?
           return

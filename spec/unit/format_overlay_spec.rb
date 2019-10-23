@@ -2,33 +2,27 @@ require 'odca/overlays/format_overlay'
 
 RSpec.describe Odca::Overlays::FormatOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new
   end
 
   describe '#to_h' do
     context 'format overlay has format attributes' do
       before(:each) do
-        overlay.description = 'desc'
-
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'DD/MM/YYYY'
             ).call
           )
         )
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'YYYY/MM/DD'
             ).call
           )
         )
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'third_attr', value: 'MM/DD/YYYY'
@@ -39,12 +33,6 @@ RSpec.describe Odca::Overlays::FormatOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/format/1.0',
-          description: 'desc',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           attr_formats: {
             'attr_name' => 'DD/MM/YYYY',
             'sec_attr' => 'YYYY/MM/DD',
@@ -55,9 +43,9 @@ RSpec.describe Odca::Overlays::FormatOverlay do
     end
   end
 
-  describe '#add_format_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_format_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when format_attribute is provided correctly' do
@@ -87,14 +75,14 @@ RSpec.describe Odca::Overlays::FormatOverlay do
   describe '#attr_formats' do
     context 'when format_attributes are added' do
       before(:each) do
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'DD/MM/YYYY'
             ).call
           )
         )
-        overlay.add_format_attribute(
+        overlay.add_attribute(
           described_class::FormatAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'YYYY/MM/DD'

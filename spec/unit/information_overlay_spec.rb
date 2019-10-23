@@ -2,27 +2,20 @@ require 'odca/overlays/information_overlay'
 
 RSpec.describe Odca::Overlays::InformationOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new(language: 'en')
   end
 
   describe '#to_h' do
     context 'information overlay has information attributes' do
       before(:each) do
-        overlay.description = 'desc'
-        overlay.language = 'en'
-
-        overlay.add_information_attribute(
+        overlay.add_attribute(
           described_class::InformationAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'info'
             ).call
           )
         )
-        overlay.add_information_attribute(
+        overlay.add_attribute(
           described_class::InformationAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'some info'
@@ -33,12 +26,6 @@ RSpec.describe Odca::Overlays::InformationOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/information/1.0',
-          description: 'desc',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           language: 'en',
           attr_information: {
             'attr_name' => 'info',
@@ -49,9 +36,9 @@ RSpec.describe Odca::Overlays::InformationOverlay do
     end
   end
 
-  describe '#add_information_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_information_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when information_attribute is provided correctly' do
@@ -81,14 +68,14 @@ RSpec.describe Odca::Overlays::InformationOverlay do
   describe '#attr_information' do
     context 'when information_attributes are added' do
       before(:each) do
-        overlay.add_information_attribute(
+        overlay.add_attribute(
           described_class::InformationAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'attr_name', value: 'info'
             ).call
           )
         )
-        overlay.add_information_attribute(
+        overlay.add_attribute(
           described_class::InformationAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'sec_attr', value: 'some info'

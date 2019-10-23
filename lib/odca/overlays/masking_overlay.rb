@@ -1,38 +1,25 @@
-require 'odca/overlays/header'
 require 'odca/null_value'
 
 module Odca
   module Overlays
     class MaskingOverlay
-      extend Forwardable
-      attr_reader :mask_attributes, :header
+      attr_reader :mask_attributes
 
-      def_delegators :header,
-        :issued_by, :type,
-        :role, :purpose,
-        :description, :description=
-
-      def initialize(header)
+      def initialize
         @mask_attributes = []
-        header.type = 'spec/overlay/masking/1.0'
-        @header = header
-      end
-
-      def to_json(options = {})
-        to_h.to_json(*options)
       end
 
       def to_h
-        header.to_h.merge(
+        {
           attr_masks: attr_masks
-        )
+        }
       end
 
       def empty?
         mask_attributes.empty?
       end
 
-      def add_mask_attribute(mask_attribute)
+      def add_attribute(mask_attribute)
         return if mask_attribute.nil? || mask_attribute.attr_name.strip.empty?
         mask_attributes << mask_attribute
       end
@@ -66,10 +53,10 @@ module Odca
 
         def call
           mask = if value.nil? || value.strip.empty?
-                      Odca::NullValue.new
-                    else
-                      value.strip
-                    end
+                   Odca::NullValue.new
+                 else
+                   value.strip
+                 end
           {
             attr_name: attr_name.strip,
             mask: mask

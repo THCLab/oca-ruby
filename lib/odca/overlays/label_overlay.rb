@@ -1,43 +1,30 @@
-require 'odca/overlays/header'
 require 'odca/null_value'
 
 module Odca
   module Overlays
     class LabelOverlay
-      extend Forwardable
-      attr_accessor :language
-      attr_reader :label_attributes, :header
+      attr_reader :label_attributes, :language
 
-      def_delegators :header,
-        :issued_by, :type,
-        :role, :purpose,
-        :description, :description=
-
-      def initialize(header)
+      def initialize(language:)
         @label_attributes = []
-        header.type = 'spec/overlay/label/1.0'
-        @header = header
-      end
-
-      def to_json(options = {})
-        to_h.to_json(*options)
+        @language = language
       end
 
       def to_h
-        header.to_h.merge(
+        {
           language: language,
           attr_labels: attr_labels,
           attr_categories: attr_categories,
           category_labels: category_labels,
           category_attributes: category_attributes
-        )
+        }
       end
 
       def empty?
         label_attributes.empty?
       end
 
-      def add_label_attribute(label_attribute)
+      def add_attribute(label_attribute)
         return if label_attribute.nil? || label_attribute.name.strip.empty?
         label_attributes << label_attribute
       end

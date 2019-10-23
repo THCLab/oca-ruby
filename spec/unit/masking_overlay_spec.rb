@@ -2,26 +2,20 @@ require 'odca/overlays/masking_overlay'
 
 RSpec.describe Odca::Overlays::MaskingOverlay do
   let(:overlay) do
-    described_class.new(
-      Odca::Overlays::Header.new(
-        role: 'role', purpose: 'purpose'
-      )
-    )
+    described_class.new
   end
 
   describe '#to_h' do
     context 'masking overlay has masking attributes' do
       before(:each) do
-        overlay.description = 'desc'
-
-        overlay.add_mask_attribute(
+        overlay.add_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii1', value: 'PA_pseudo'
             ).call
           )
         )
-        overlay.add_mask_attribute(
+        overlay.add_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii2', value: 'PA_pseudo'
@@ -32,12 +26,6 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
 
       it 'returns filled hash' do
         expect(overlay.to_h).to eql(
-          '@context' => 'https://odca.tech/overlays/v1',
-          type: 'spec/overlay/masking/1.0',
-          description: 'desc',
-          issued_by: '',
-          role: 'role',
-          purpose: 'purpose',
           attr_masks: {
             'pii1' => 'PA_pseudo',
             'pii2' => 'PA_pseudo'
@@ -47,9 +35,9 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
     end
   end
 
-  describe '#add_mask_attribute' do
+  describe '#add_attribute' do
     before(:each) do
-      overlay.add_mask_attribute(attribute)
+      overlay.add_attribute(attribute)
     end
 
     context 'when mask_attribute is provided correctly' do
@@ -79,14 +67,14 @@ RSpec.describe Odca::Overlays::MaskingOverlay do
   describe '#attr_masks' do
     context 'when mask_attributes are added' do
       before(:each) do
-        overlay.add_mask_attribute(
+        overlay.add_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii1', value: 'PA_pseudo'
             ).call
           )
         )
-        overlay.add_mask_attribute(
+        overlay.add_attribute(
           described_class::MaskingAttribute.new(
             described_class::InputValidator.new(
               attr_name: 'pii2', value: 'PA_pseudo'

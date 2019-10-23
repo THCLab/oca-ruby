@@ -370,6 +370,51 @@ RSpec.describe Odca::BigParser do
           end
         end
       end
+
+      context 'when Masking Overlay is provided' do
+        let(:masking_overlays) do
+          Dir[File.join(
+            LIB_ROOT, output_dir, schema_base_dir, 'MaskingOverlay*.json'
+          )].map do |path|
+            JSON.load(File.open(path))
+          end
+        end
+
+        context 'for all schema bases' do
+          let(:schema_base_dir) { '*' }
+
+          it 'generates valid overlays output' do
+            masking_overlays.each do |overlay|
+              expect(overlay).to include(
+                'attr_masks', 'schema_base',
+                '@context' => 'https://odca.tech/overlays/v1',
+                'type' => 'spec/overlay/masking/1.0'
+              )
+            end
+          end
+        end
+
+        context 'for AuditOverview schema base' do
+          let(:schema_base_dir) { 'AuditOverview' }
+          let(:overlay) { masking_overlays.first }
+
+          it 'attr_masks keys occur in attributes' do
+            expect(audit_overview_schema_base['attributes'].keys)
+              .to include(*overlay['attr_masks'].keys)
+          end
+
+          it 'attr_masks is filled' do
+            expect(overlay['attr_masks']).not_to be_empty
+          end
+
+          it 'schema_base is filled correctly' do
+            expect(overlay['schema_base']).to eql(
+              "hl:#{Odca::HashlinkGenerator
+                .call(audit_overview_schema_base)}"
+            )
+          end
+        end
+      end
     end
   end
 end
