@@ -1,3 +1,5 @@
+require 'forwardable'
+
 module Odca
   class SchemaBase
     extend Forwardable

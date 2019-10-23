@@ -1,3 +1,9 @@
+PATH
+  remote: .
+  specs:
+    odca (0.1.0)
+      base58 (~> 0.2)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -22,9 +28,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  base58
-  rake
-  rspec
+  odca!
+  rake (~> 13.0)
+  rspec (~> 3.0)
 
 BUNDLED WITH
    1.16.2

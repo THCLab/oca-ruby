@@ -1,12 +1,11 @@
 require 'fileutils'
-require 'odca/odca.rb'
 require 'odca/hashlink_generator'
 require 'odca/schema_parser'
 require 'json'
 require 'pp'
 
 module Odca
-  class BigParser
+  class Parser
     attr_reader :records, :output_dir, :overlay_dtos
 
     def initialize(records, output_dir)

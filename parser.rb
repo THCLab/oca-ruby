@@ -6,8 +6,8 @@ filename = ARGV[0]
 raise RuntimeError.new, 'Please provide input file as an argument' unless filename
 
 require 'csv'
-require 'odca/big_parser'
+require 'odca'
 
 OUTPUT_DIR = 'output'.freeze
 records = CSV.read(filename, col_sep: ';')
-Odca::BigParser.new(records, OUTPUT_DIR).call
+Odca::Parser.new(records, OUTPUT_DIR).call

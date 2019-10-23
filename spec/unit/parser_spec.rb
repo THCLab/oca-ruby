@@ -1,8 +1,8 @@
-require 'odca/big_parser'
+require 'odca/parser'
 require 'odca/hashlink_generator'
 require 'json'
 
-RSpec.describe Odca::BigParser do
+RSpec.describe Odca::Parser do
   let(:topic)  { described_class.new(records, output_dir) }
 
   let(:output_dir) { 'spec/shared/output' }

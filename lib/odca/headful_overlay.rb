@@ -1,4 +1,5 @@
 require 'yaml'
+require 'forwardable'
 require 'odca/overlays/header'
 
 module Odca
