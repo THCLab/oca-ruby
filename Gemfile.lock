@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    odca (0.1.0)
+    odca (0.1.1)
       base58 (~> 0.2)
 
 GEM
