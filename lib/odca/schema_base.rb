@@ -58,10 +58,15 @@ module Odca
       attr_reader :name, :type, :pii
 
       def self.new(**args)
+        name = args.fetch(:name).strip
+        raise 'Attribute name cannot be empty' if name.empty?
+        type = args.fetch(:type).strip
+        raise 'Attribute type cannot be empty' if type.empty?
+
         super(
-          name: args[:name],
-          type: args[:type],
-          pii: args[:pii].to_s.strip
+          name: name,
+          type: type,
+          pii: args.fetch(:pii).to_s.strip
         )
       end
 
