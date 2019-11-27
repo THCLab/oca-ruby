@@ -32,11 +32,7 @@ module Odca
         Odca::Overlays::Header.new(
           role: role,
           purpose: purpose,
-          type: overlay_info['type_v1'],
-          description: format(
-            overlay_info['description'],
-            schema_name: parentful_overlay.parent.name
-          )
+          type: overlay_info['type_v1']
         )
     end
 

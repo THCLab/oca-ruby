@@ -1,35 +1,26 @@
 label:
   type_v1: spec/overlay/label/1.0
-  description: Category and attribute labels for %{schema_name}
 
 format:
   type_v1: spec/overlay/format/1.0
-  description: Attribute formats for %{schema_name}
 
 encode:
   type_v1: spec/overlay/encode/1.0
-  description: Character set encoding for %{schema_name}
 
 entry:
   type_v1: spec/overlay/entry/1.0
-  description: Field entries for %{schema_name}
 
 information:
   type_v1: spec/overlay/information/1.0
-  description: Informational items for %{schema_name}
 
 conditional:
   type_v1: spec/overlay/conditional/1.0
-  description:
 
 source:
   type_v1: spec/overlay/source/1.0
-  description: Source endpoints for %{schema_name}
 
 review:
   type_v1: spec/overlay/review/1.0
-  description: Field entry review comments for %{schema_name}
 
 masking:
   type_v1: spec/overlay/masking/1.0
-  description: Masking attributes for %{schema_name}
