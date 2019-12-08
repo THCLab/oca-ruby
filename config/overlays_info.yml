@@ -33,3 +33,7 @@ review:
 masking:
   type_v1: spec/overlay/masking/1.0
   description: Masking attributes for %{schema_name}
+
+mapping:
+  type_v1: spec/overlay/mapping/1.0
+  description: Mapping attributes for %{schema_name}
