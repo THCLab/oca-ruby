@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
-  s.name        = 'odca-ruby'
-  s.version     = '0.2.0'
+  s.name        = 'odca'
+  s.version     = '0.2.1'
   s.date        = '2019-12-15'
   s.summary     = "Overlays Data Capture Architecture (ODCA) objects parser"
   s.description = "Parser for ODCA objects"
