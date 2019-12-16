@@ -1,3 +1,4 @@
+require 'forwardable'
 require 'odca/hashlink_generator'
 
 module Odca

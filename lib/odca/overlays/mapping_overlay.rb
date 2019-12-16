@@ -2,12 +2,12 @@ require 'odca/overlay'
 
 module Odca
   module Overlays
-    class FormatOverlay
+    class MappingOverlay
       extend Overlay
 
       def to_h
         {
-          attr_formats: attr_values
+          attr_mapping: attr_values
         }
       end
     end

@@ -1,69 +1,31 @@
+require 'odca/overlay'
 require 'odca/null_value'
 
 module Odca
   module Overlays
     class EntryOverlay
-      attr_reader :entry_attributes, :language
+      extend Overlay
+      attr_reader :language
 
       def initialize(language:)
-        @entry_attributes = []
+        _initialize
         @language = language
       end
 
       def to_h
         {
           language: language,
-          attr_entries: attr_entries
+          attr_entries: attr_values
         }
       end
 
-      def empty?
-        entry_attributes.empty?
-      end
-
-      def add_attribute(entry_attribute)
-        return if entry_attribute.nil? || entry_attribute.entries.empty?
-        entry_attributes << entry_attribute
-      end
-
-      private def attr_entries
-        entry_attributes.each_with_object({}) do |attr, memo|
-          memo[attr.attr_name] = attr.entries
-        end
-      end
-
-      class EntryAttribute
-        attr_reader :attr_name, :entries
-
-        def initialize(attr_name:, entries:)
-          @attr_name = attr_name
-          @entries = entries
-        end
-      end
-
       class InputValidator
-        attr_reader :attr_name, :value
-
-        def initialize(attr_name:, value:)
-          if attr_name.strip.empty?
-            raise 'Attribute name is expected to be non empty String'
+        def validate(value)
+          if value.nil? || value.strip.empty?
+            Odca::NullValue.new
+          else
+            value.split('|').map(&:strip)
           end
-
-          @attr_name = attr_name
-          @value = value
-        end
-
-        def call
-          entries = if value.nil? || value.strip.empty?
-                      Odca::NullValue.new
-                    else
-                      value.split('|').map(&:strip)
-                    end
-
-          {
-            attr_name: attr_name.strip,
-            entries: entries
-          }
         end
       end
     end

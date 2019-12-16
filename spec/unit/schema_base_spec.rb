@@ -51,6 +51,74 @@ RSpec.describe Odca::SchemaBase do
       )
     end
 
+    describe '.new' do
+      context 'attribute args are complete' do
+        let(:attr_name) { 'attr_name' }
+        let(:attr_type) { 'attr_type' }
+        let(:args) do
+          { name: attr_name, type: attr_type, pii: 'Y' }
+        end
+
+        it 'creates attribute' do
+          expect(described_class.new(args))
+            .to be_kind_of(described_class)
+        end
+
+        context 'attribute name ends with whitespaces' do
+          let(:attr_name) { 'name   ' }
+
+          it 'strips attribute name' do
+            expect(described_class.new(args).name)
+              .eql?('name')
+          end
+
+          context 'attribute name is blank' do
+            let(:attr_name) { ' ' }
+
+            it 'raises error' do
+              expect { described_class.new(args) }
+                .to raise_error(
+                  RuntimeError,
+                  'Attribute name cannot be empty'
+                )
+            end
+          end
+        end
+
+        context 'attribute type ends with whitespaces' do
+          let(:attr_name) { 'type   ' }
+
+          it 'strips attribute type' do
+            expect(described_class.new(args).type)
+              .eql?('type')
+          end
+
+          context 'attribute type is blank' do
+            let(:attr_type) { ' ' }
+
+            it 'raises error' do
+              expect { described_class.new(args) }
+                .to raise_error(
+                  RuntimeError,
+                  'Attribute type cannot be empty'
+                )
+            end
+          end
+        end
+      end
+
+      context 'attribute args are incomplete' do
+        let(:args) do
+          { type: 'type', pii: 'Y' }
+        end
+
+        it 'raises error' do
+          expect { described_class.new(args) }
+            .to raise_error(KeyError)
+        end
+      end
+    end
+
     describe '#pii?' do
       context 'attribute is pii' do
         let(:pii) { 'Y' }

@@ -19,12 +19,24 @@ module Odca
       overlay_attrs = {}
       overlay_indexes = overlay_dtos.map(&:index)
 
+      entry_overlay_indexes = overlay_dtos.select do |ov|
+        ov.name == 'Entry Overlay'
+      end.map(&:index)
+
       records.each do |row|
         attr_name = row[3]
+        attr_type = row[4]
+        entry_overlay_indexes.each do |ov_index|
+          if row[ov_index]
+            attr_type = 'Array[Text]'
+            break
+          end
+        end
+
         schema_base.add_attribute(
           SchemaBase::Attribute.new(
             name: attr_name,
-            type: row[4],
+            type: attr_type,
             pii: row[5]
           )
         )
