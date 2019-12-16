@@ -5,11 +5,11 @@ require 'odca/version'
 Gem::Specification.new do |spec|
   spec.name          = 'odca'
   spec.version       = Odca::VERSION
-  spec.authors       = ['THCLab']
-  spec.email         = ['olichwiruk@gmail.pl']
+  spec.authors       = ["Robert Mitwicki", "Marcin Olichwiruk", "Michał Pietrus"]
+  spec.email         = ['robert@thclab.online']
 
-  spec.summary       = 'ODCA implementation in ruby'
-  spec.homepage      = 'https://github.com/THCLab/odca-ruby'
+  spec.summary       = 'Overlays Data Capture Architecture (ODCA) objects parser'
+  spec.homepage      = 'https://odca.online'
   spec.license       = 'MIT'
 
   # Specify which files should be added to the gem when it is released.
