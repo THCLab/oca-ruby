@@ -414,6 +414,51 @@ RSpec.describe Odca::Parser do
           end
         end
       end
+
+      context 'when Mapping Overlay is provided' do
+        let(:mapping_overlays) do
+          Dir[File.join(
+            LIB_ROOT, output_dir, schema_base_dir, 'MappingOverlay*.json'
+          )].map do |path|
+            JSON.load(File.open(path))
+          end
+        end
+
+        context 'for all schema bases' do
+          let(:schema_base_dir) { '*' }
+
+          it 'generates valid overlays output' do
+            mapping_overlays.each do |overlay|
+              expect(overlay).to include(
+                'attr_mapping', 'schema_base',
+                '@context' => 'https://odca.tech/overlays/v1',
+                'type' => 'spec/overlay/mapping/1.0'
+              )
+            end
+          end
+        end
+
+        context 'for AuditOverview schema base' do
+          let(:schema_base_dir) { 'AuditOverview' }
+          let(:overlay) { mapping_overlays.first }
+
+          it 'attr_mapping keys occur in attributes' do
+            expect(audit_overview_schema_base['attributes'].keys)
+              .to include(*overlay['attr_mapping'].keys)
+          end
+
+          it 'attr_mapping is filled' do
+            expect(overlay['attr_mapping']).not_to be_empty
+          end
+
+          it 'schema_base is filled correctly' do
+            expect(overlay['schema_base']).to eql(
+              "hl:#{Odca::HashlinkGenerator
+                .call(audit_overview_schema_base)}"
+            )
+          end
+        end
+      end
     end
   end
 end
