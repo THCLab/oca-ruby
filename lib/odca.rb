@@ -12,6 +12,7 @@ require 'odca/overlays/conditional_overlay'
 require 'odca/overlays/source_overlay'
 require 'odca/overlays/review_overlay'
 require 'odca/overlays/masking_overlay'
+require 'odca/overlays/mapping_overlay'
 
 module Odca
   ROOT_PATH = File.expand_path('..', File.dirname(__FILE__))
