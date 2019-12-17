@@ -1,13 +1,12 @@
 module Odca
   module Overlays
     class Header
-      attr_reader :issued_by, :role, :purpose, :description, :type
+      attr_reader :issued_by, :role, :purpose, :type
 
-      def initialize(role:, purpose:, description:, type:, issued_by: '')
+      def initialize(role:, purpose:, type:, issued_by: '')
         @issued_by = issued_by
         @role = role
         @purpose = purpose
-        @description = description
         @type = type
       end
 
@@ -15,7 +14,6 @@ module Odca
         {
           '@context' => 'https://odca.tech/overlays/v1',
           type: type,
-          description: description,
           issued_by: issued_by,
           role: role || '',
           purpose: purpose || ''

@@ -1,4 +1,5 @@
 require 'yaml'
+require 'forwardable'
 require 'odca/overlays/header'
 
 module Odca
@@ -31,16 +32,14 @@ module Odca
         Odca::Overlays::Header.new(
           role: role,
           purpose: purpose,
-          type: overlay_info['type_v1'],
-          description: format(
-            overlay_info['description'],
-            schema_name: parentful_overlay.parent.name
-          )
+          type: overlay_info['type_v1']
         )
     end
 
     def overlays_info
-      @overlays_info ||= YAML.safe_load(File.open(OVERLAYS_INFO))
+      @overlays_info ||= YAML.safe_load(
+        File.open(File.join(Odca::ROOT_PATH, OVERLAYS_INFO))
+      )
     end
 
     def overlay_info

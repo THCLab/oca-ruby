@@ -6,7 +6,7 @@ RSpec.describe Odca::Overlays::LabelOverlay do
   end
 
   describe '#to_h' do
-    context 'label overlay has label attributes' do
+    context 'label overlay has attributes' do
       before(:each) do
         overlay.add_attribute(
           described_class::LabelAttribute.new(
@@ -58,7 +58,7 @@ RSpec.describe Odca::Overlays::LabelOverlay do
       overlay.add_attribute(attribute)
     end
 
-    context 'when label_attribute is provided correctly' do
+    context 'when attribute is provided correctly' do
       let(:attribute) do
         described_class::LabelAttribute.new(
           described_class::InputValidator.new(
@@ -67,17 +67,17 @@ RSpec.describe Odca::Overlays::LabelOverlay do
         )
       end
 
-      it 'adds attribute to label_attributes array' do
-        expect(overlay.label_attributes)
+      it 'adds attribute to attributes array' do
+        expect(overlay.attributes)
           .to contain_exactly(attribute)
       end
     end
 
-    context 'when label_attribute is nil' do
+    context 'when attribute is nil' do
       let(:attribute) { nil }
 
-      it 'ignores label_attribute' do
-        expect(overlay.label_attributes).to be_empty
+      it 'ignores attribute' do
+        expect(overlay.attributes).to be_empty
       end
     end
   end
@@ -143,7 +143,7 @@ RSpec.describe Odca::Overlays::LabelOverlay do
 
         it 'splits into category and label' do
           expect(validator.call).to include(
-            name: 'attr_name',
+            attr_name: 'attr_name',
             category: 'C a t',
             label: 'lab'
           )
@@ -155,7 +155,7 @@ RSpec.describe Odca::Overlays::LabelOverlay do
 
         it 'sets label as value' do
           expect(validator.call).to include(
-            name: 'attr_name',
+            attr_name: 'attr_name',
             category: be_a(Odca::NullValue),
             label: 'Label'
           )
@@ -167,7 +167,7 @@ RSpec.describe Odca::Overlays::LabelOverlay do
 
         it 'sets category and label as empty strings' do
           expect(validator.call).to include(
-            name: 'attr_name',
+            attr_name: 'attr_name',
             category: be_a(Odca::NullValue),
             label: be_a(Odca::NullValue)
           )

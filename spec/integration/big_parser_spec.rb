@@ -1,9 +1,8 @@
-require 'odca/big_parser'
-require 'odca/hashlink_generator'
+require 'odca'
 require 'csv'
 require 'json'
 
-RSpec.describe Odca::BigParser do
+RSpec.describe Odca::Parser do
   let(:topic)  { described_class.new(records, output_dir) }
 
   let(:filename) { File.join(SPEC_ROOT, 'shared/example.csv') }
@@ -415,6 +414,7 @@ RSpec.describe Odca::BigParser do
           end
         end
       end
+
       context 'when Mapping Overlay is provided' do
         let(:mapping_overlays) do
           Dir[File.join(

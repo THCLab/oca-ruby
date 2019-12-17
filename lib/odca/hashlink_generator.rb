@@ -7,7 +7,7 @@ module Odca
     def self.call(schema)
       Base58.encode(
         Digest::SHA2.hexdigest(
-          JSON.pretty_generate(schema)
+          JSON.generate(schema)
         ).to_i(16)
       )
     end

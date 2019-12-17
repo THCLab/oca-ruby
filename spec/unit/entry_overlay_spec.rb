@@ -6,7 +6,7 @@ RSpec.describe Odca::Overlays::EntryOverlay do
   end
 
   describe '#to_h' do
-    context 'entry overlay has entry attributes' do
+    context 'entry overlay has attributes' do
       before(:each) do
         overlay.add_attribute(
           described_class::EntryAttribute.new(
@@ -36,66 +36,8 @@ RSpec.describe Odca::Overlays::EntryOverlay do
     end
   end
 
-  describe '#add_attribute' do
-    before(:each) do
-      overlay.add_attribute(attribute)
-    end
-
-    context 'when entry_attribute is provided correctly' do
-      let(:attribute) do
-        described_class::EntryAttribute.new(
-          described_class::InputValidator.new(
-            attr_name: 'attr', value: 'o1|o2'
-          ).call
-        )
-      end
-
-      it 'adds attribute to entry_attributes array' do
-        expect(overlay.entry_attributes)
-          .to contain_exactly(attribute)
-      end
-    end
-
-    context 'when entry_attribute is nil' do
-      let(:attribute) { nil }
-
-      it 'ignores entry_attribute' do
-        expect(overlay.entry_attributes).to be_empty
-      end
-    end
-  end
-
-  describe '#attr_entries' do
-    context 'when entry_attributes are added' do
-      before(:each) do
-        overlay.add_attribute(
-          described_class::EntryAttribute.new(
-            described_class::InputValidator.new(
-              attr_name: 'attr_name', value: 'opt1|opt2|opt3'
-            ).call
-          )
-        )
-        overlay.add_attribute(
-          described_class::EntryAttribute.new(
-            described_class::InputValidator.new(
-              attr_name: 'sec_attr', value: 'o1|o2'
-            ).call
-          )
-        )
-      end
-
-      it 'returns hash of attribute_names and array of entries' do
-        expect(overlay.__send__(:attr_entries))
-          .to include(
-            'attr_name' => %w[opt1 opt2 opt3],
-            'sec_attr' => %w[o1 o2]
-          )
-      end
-    end
-  end
-
   describe described_class::InputValidator do
-    describe '#call' do
+    describe '#validate' do
       let(:validator) do
         described_class.new(attr_name: 'attr_name', value: value)
       end
@@ -104,10 +46,8 @@ RSpec.describe Odca::Overlays::EntryOverlay do
         let(:value) { 'opt1|opt2|opt3' }
 
         it 'splits into array of entries' do
-          expect(validator.call).to include(
-            attr_name: 'attr_name',
-            entries: %w[opt1 opt2 opt3]
-          )
+          expect(validator.validate(value))
+            .to contain_exactly('opt1', 'opt2', 'opt3')
         end
       end
 
@@ -115,21 +55,17 @@ RSpec.describe Odca::Overlays::EntryOverlay do
         let(:value) { 'opt1' }
 
         it 'returns array with one entry' do
-          expect(validator.call).to include(
-            attr_name: 'attr_name',
-            entries: %w[opt1]
-          )
+          expect(validator.validate(value))
+            .to contain_exactly('opt1')
         end
       end
 
       context 'record is empty' do
         let(:value) { '  ' }
 
-        it 'sets entries as null_value' do
-          expect(validator.call).to include(
-            attr_name: 'attr_name',
-            entries: be_a(Odca::NullValue)
-          )
+        it 'sets value as null_value' do
+          expect(validator.validate(value))
+            .to be_a(Odca::NullValue)
         end
       end
     end
