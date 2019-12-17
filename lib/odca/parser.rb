@@ -72,7 +72,7 @@ module Odca
     def save_overlay(headful_overlay, path:)
       overlay_class_name = headful_overlay.overlay.class
         .name.split('::').last
-      hl = 'hl:' + HashlinkGenerator.call(headful_overlay)
+      hl = HashlinkGenerator.call(headful_overlay)
 
       File.open("#{path}/#{overlay_class_name}-#{hl}.json", 'w') do |f|
         f.write(JSON.pretty_generate(headful_overlay))
