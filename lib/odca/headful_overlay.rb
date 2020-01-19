@@ -44,7 +44,7 @@ module Odca
 
     def overlay_info
       overlay_class_name = overlay.class.name.split('::').last
-      overlay_key = overlay_class_name.gsub('Overlay', '').downcase
+      overlay_key = overlay_class_name.gsub('Overlay', '').gsub(/([^\^])([A-Z])/,'\1_\2').downcase
       overlays_info.fetch(overlay_key) do
         raise "Not found specific information about #{overlay_class_name}"
       end

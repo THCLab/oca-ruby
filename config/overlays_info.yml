@@ -4,8 +4,8 @@ label:
 format:
   type_v1: spec/overlay/format/1.0
 
-encode:
-  type_v1: spec/overlay/encode/1.0
+character_encoding:
+  type_v1: spec/overlay/character_encoding/1.0
 
 entry:
   type_v1: spec/overlay/entry/1.0

@@ -129,10 +129,10 @@ RSpec.describe Odca::Parser do
         end
       end
 
-      context 'when Encode Overlay is provided' do
-        let(:encode_overlays) do
+      context 'when Character Encoding Overlay is provided' do
+        let(:character_encoding_overlays) do
           Dir[File.join(
-            LIB_ROOT, output_dir, schema_base_dir, 'EncodeOverlay*.json'
+            LIB_ROOT, output_dir, schema_base_dir, 'CharacterEncodingOverlay*.json'
           )].map do |path|
             JSON.load(File.open(path))
           end
@@ -142,11 +142,11 @@ RSpec.describe Odca::Parser do
           let(:schema_base_dir) { '*' }
 
           it 'generates valid overlays output' do
-            encode_overlays.each do |overlay|
+            character_encoding_overlays.each do |overlay|
               expect(overlay).to include(
-                'attr_encoding', 'default_encoding', 'schema_base',
+                'attr_character_encoding', 'default_character_encoding', 'schema_base',
                 '@context' => 'https://odca.tech/overlays/v1',
-                'type' => 'spec/overlay/encode/1.0'
+                'type' => 'spec/overlay/character_encoding/1.0'
               )
             end
           end
@@ -154,11 +154,11 @@ RSpec.describe Odca::Parser do
 
         context 'for Audit Overview schema base' do
           let(:schema_base_dir) { 'AuditOverview' }
-          let(:overlay) { encode_overlays.first }
+          let(:overlay) { character_encoding_overlays.first }
 
-          it 'attr_encodings occur in attributes' do
+          it 'attr_character_encodings occur in attributes' do
             expect(audit_overview_schema_base['attributes'].keys)
-              .to include(*overlay['attr_encoding'].keys)
+              .to include(*overlay['attr_character_encoding'].keys)
           end
 
           it 'schema_base is filled correctly' do
