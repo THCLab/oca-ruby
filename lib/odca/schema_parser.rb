@@ -26,12 +26,6 @@ module Odca
       records.each do |row|
         attr_name = row[3]
         attr_type = row[4]
-        entry_overlay_indexes.each do |ov_index|
-          if row[ov_index]
-            attr_type = 'Array[Text]'
-            break
-          end
-        end
 
         schema_base.add_attribute(
           SchemaBase::Attribute.new(
