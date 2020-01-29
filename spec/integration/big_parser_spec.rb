@@ -56,8 +56,8 @@ RSpec.describe Odca::Parser do
           it 'generates valid overlays output' do
             label_overlays.each do |overlay|
               expect(overlay).to include(
-                'attr_labels', 'attr_categories', 'category_labels',
-                'category_attributes', 'schema_base',
+                'attr_labels', 'attr_categories', 'cat_labels',
+                'cat_attributes', 'schema_base',
                 '@context' => 'https://odca.tech/overlays/v1',
                 'type' => 'spec/overlay/label/1.0',
                 'language' => 'en_US'

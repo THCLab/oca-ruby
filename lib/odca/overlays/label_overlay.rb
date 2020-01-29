@@ -3,20 +3,22 @@ require 'odca/null_value'
 module Odca
   module Overlays
     class LabelOverlay
-      attr_reader :attributes, :language
+      attr_reader :attributes, :language, :category_resolver
 
-      def initialize(language:)
+      def initialize(language:, category_resolver: CategoryResolver.new)
         @attributes = []
         @language = language
+        @category_resolver = category_resolver
       end
 
       def to_h
+        resolved_categories = category_resolver.call(attributes)
         {
           language: language,
           attr_labels: attr_labels,
-          attr_categories: attr_categories,
-          category_labels: category_labels,
-          category_attributes: category_attributes
+          attr_categories: resolved_categories.attr_categories,
+          cat_labels: resolved_categories.category_labels,
+          cat_attributes: resolved_categories.category_attributes
         }
       end
 
@@ -35,35 +37,78 @@ module Odca
         end
       end
 
-      private def attr_categories
-        attributes.map(&:category).uniq.map do |cat|
-          next if cat.empty?
-          cat.downcase.gsub(/\s+/, '_').to_sym
-        end.compact
-      end
+      class CategoryResolver
+        attr_reader :attr_categories, :category_labels, :category_attributes
 
-      private def category_labels
-        attributes.map(&:category).uniq
-          .each_with_object({}) do |cat, memo|
-            next if cat.empty?
-            memo[cat.downcase.gsub(/\s+/, '_').to_sym] = cat
+        def initialize
+          @attr_categories = []
+          @category_labels = {}
+          @category_attributes = {}
+        end
+
+        def call(attributes)
+          attributes.each do |attribute|
+            next if attribute.categories.empty?
+            categories = attribute.categories.dup
+            category = categories.pop
+
+            supercategory_numbers = []
+
+            categories.each do |supercategory|
+              supercategory_attr = find_or_create_category_attr(
+                supercategory_numbers, supercategory
+              )
+              supercategory_numbers.push(
+                supercategory_attr.delete('_').split('-').last
+              )
+              unless attr_categories.include? supercategory_attr
+                attr_categories.push(supercategory_attr)
+              end
+              category_labels[supercategory_attr] = supercategory
+            end
+
+            category_attr = find_or_create_category_attr(
+              supercategory_numbers, category
+            )
+            unless attr_categories.include? category_attr
+              attr_categories.push(category_attr)
+            end
+            category_labels[category_attr] = category
+
+            category_attributes[category_attr] = category_attributes
+              .fetch(category_attr) { [] }.push(attribute.attr_name).uniq
           end
-      end
+          self
+        end
 
-      private def category_attributes
-        attributes.each_with_object({}) do |attr, memo|
-          next if attr.category.empty?
-          category_attr = attr.category.downcase.gsub(/\s+/, '_').to_sym
-          (memo[category_attr] ||= []) << attr.attr_name
+        private def find_or_create_category_attr(supercategory_numbers, category)
+          nested_category_numbers =
+            if supercategory_numbers.empty?
+              '-'
+            else
+              "-#{supercategory_numbers.join('-')}-"
+            end
+          category_attr = category_labels.select do |key, value|
+            value == category &&
+              key.match("_cat#{nested_category_numbers}[0-9]*_")
+          end
+          if !category_attr.empty?
+            category_attr.keys.first
+          else
+            subcategory_number = category_labels.select do |key, _v|
+              key.match("_cat#{nested_category_numbers}[0-9]*_")
+            end.size + 1
+            "_cat#{nested_category_numbers}#{subcategory_number}_"
+          end
         end
       end
 
       class LabelAttribute
-        attr_reader :attr_name, :category, :label
+        attr_reader :attr_name, :categories, :label
 
-        def initialize(attr_name:, category:, label:)
+        def initialize(attr_name:, categories:, label:)
           @attr_name = attr_name
-          @category = category
+          @categories = categories
           @label = label
         end
       end
@@ -81,21 +126,14 @@ module Odca
         end
 
         def call
-          category = Odca::NullValue.new
-          label = Odca::NullValue.new
+          splited = value.split('|').map(&:strip)
 
-          splited = value.split('|')
-          case splited.length
-          when 1
-            label = value.strip
-          when 2
-            category = splited[0].strip
-            label = splited[1].strip
-          end
+          label = splited.empty? ? Odca::NullValue.new : splited.pop
+          categories = splited
 
           {
             attr_name: attr_name.strip,
-            category: category,
+            categories: categories,
             label: label
           }
         end
