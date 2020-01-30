@@ -19,10 +19,6 @@ module Odca
       overlay_attrs = {}
       overlay_indexes = overlay_dtos.map(&:index)
 
-      entry_overlay_indexes = overlay_dtos.select do |ov|
-        ov.name == 'Entry Overlay'
-      end.map(&:index)
-
       records.each do |row|
         attr_name = row[3]
         attr_type = row[4]
