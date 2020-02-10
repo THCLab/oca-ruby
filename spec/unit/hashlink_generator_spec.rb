@@ -5,7 +5,7 @@ RSpec.describe Odca::HashlinkGenerator do
     context 'when hash is provided' do
       it 'generates hashlink string' do
         expect(described_class.call(test: 'test'))
-          .to eql('5cZ6S9VWSRPUcyYak416m51EhtJGfhSrfhuzdJsxiWxf')
+          .to eql('zQmSYdoyHvTerJXoDPLNFia1EjenxbHtwS8KbWRutrrWdcF')
       end
     end
   end
