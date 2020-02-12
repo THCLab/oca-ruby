@@ -3,16 +3,9 @@ require 'odca/parser'
 require 'odca/schema_base'
 require 'odca/headful_overlay'
 require 'odca/parentful_overlay'
-require 'odca/overlays/format_overlay'
-require 'odca/overlays/label_overlay'
-require 'odca/overlays/character_encoding_overlay'
-require 'odca/overlays/entry_overlay'
-require 'odca/overlays/information_overlay'
-require 'odca/overlays/conditional_overlay'
-require 'odca/overlays/source_overlay'
-require 'odca/overlays/review_overlay'
-require 'odca/overlays/masking_overlay'
-require 'odca/overlays/mapping_overlay'
+Dir[File.expand_path('../odca/overlays/*.rb', __FILE__)].each do |file|
+  require file
+end
 
 module Odca
   ROOT_PATH = File.expand_path('..', File.dirname(__FILE__))
