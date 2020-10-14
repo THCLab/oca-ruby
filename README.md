@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.com/THCLab/odca-ruby.svg?branch=master)](https://travis-ci.com/THCLab/odca-ruby)
 
-# ODCA ruby tooling
+# OCA ruby tooling
 
 
 to parse pre-prepared csv file just trigger it with:
