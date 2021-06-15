@@ -31,6 +31,7 @@ module Odca
       schemas = separate_schemas(records)
       schemas.each do |schema|
         schema_base, overlays = schema.call
+        next unless schema_base && overlays
         save(schema_base: schema_base, overlays: overlays)
       end
     end

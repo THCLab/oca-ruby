@@ -8,6 +8,7 @@ module Odca
     end
 
     def call
+      return unless records.first[0]
       schema_base = Odca::SchemaBase.new(
         Odca::SchemaBase::Header.new(
           name: records.first[0],
@@ -22,6 +23,8 @@ module Odca
       records.each do |row|
         attr_name = row[3]
         attr_type = row[4]
+
+        next unless attr_name && attr_type
 
         schema_base.add_attribute(
           SchemaBase::Attribute.new(
