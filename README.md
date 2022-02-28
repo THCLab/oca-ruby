@@ -1,5 +1,10 @@
 [![Build Status](https://travis-ci.com/THCLab/odca-ruby.svg?branch=master)](https://travis-ci.com/THCLab/odca-ruby)
 
+
+# Depracated
+
+This repository is deprecated in favor of [OCA rust](https://github.com/THCLab/oca-rust)
+
 # OCA ruby tooling
 
 
